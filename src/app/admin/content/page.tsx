@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";import { Save, Layout, Navigation2, 
   DollarSign, FileText, HelpCircle, Mail, Calculator,
   Calendar, Plus, Trash2,
 } from "lucide-react";
-import { cachedFetch, saveCache } from "@/lib/admin/client-cache";
+import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
 interface ContentData {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,8 +53,14 @@ export default function AdminContent() {
   const [content, setContent] = useState<ContentData>({});
 
   useEffect(() => {
-    cachedFetch<ContentData>("site-content", "/api/site-content", {})
-      .then((data) => setContent(data || {}))
+    const cached = loadCache<ContentData>("site-content");
+    if (cached && Object.keys(cached).length > 0) {
+      setContent(cached);
+      setLoading(false);
+    }
+    fetch("/api/site-content")
+      .then((r) => r.json())
+      .then((data) => { if (data) { setContent(data); saveCache("site-content", data); } })
       .finally(() => setLoading(false));
   }, []);
 

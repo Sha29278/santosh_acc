@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Save, Plus, Trash2 } from "lucide-react";
-import { cachedFetch, saveCache } from "@/lib/admin/client-cache";
+import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
 interface FAQ {
   question: string;
@@ -17,8 +17,18 @@ export default function AdminFAQs() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    cachedFetch<FAQ[]>("faqs", "/api/data/faqs", [])
-      .then((data) => setFaqs(Array.isArray(data) ? data : []))
+    const cached = loadCache<FAQ[]>("faqs");
+    if (cached && cached.length > 0) {
+      setFaqs(cached);
+      setLoading(false);
+    }
+    fetch("/api/data/faqs")
+      .then((r) => r.json())
+      .then((data) => {
+        const items = Array.isArray(data) ? data : [];
+        setFaqs(items);
+        saveCache("faqs", items);
+      })
       .finally(() => setLoading(false));
   }, []);
 

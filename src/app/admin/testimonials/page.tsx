@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Save, Plus, Trash2, Star } from "lucide-react";
-import { cachedFetch, saveCache } from "@/lib/admin/client-cache";
+import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
 interface Testimonial {
   name: string;
@@ -29,8 +29,18 @@ export default function AdminTestimonials() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    cachedFetch<Testimonial[]>("testimonials", "/api/testimonials", [])
-      .then((data) => setItems(Array.isArray(data) ? data : []))
+    const cached = loadCache<Testimonial[]>("testimonials");
+    if (cached && cached.length > 0) {
+      setItems(cached);
+      setLoading(false);
+    }
+    fetch("/api/testimonials")
+      .then((r) => r.json())
+      .then((data) => {
+        const items = Array.isArray(data) ? data : [];
+        setItems(items);
+        saveCache("testimonials", items);
+      })
       .finally(() => setLoading(false));
   }, []);
 

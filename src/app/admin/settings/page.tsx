@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Save, Eye, EyeOff, Upload, Trash2 } from "lucide-react";
-import { cachedFetch, saveCache } from "@/lib/admin/client-cache";
+import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
 interface SiteConfig {
   adminUsername: string;
@@ -36,13 +36,22 @@ export default function AdminSettings() {
   });
 
   useEffect(() => {
-    cachedFetch<SiteConfig>("site-config", "/api/site-config", {
-      adminUsername: "", adminPassword: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
-      adminEmail: "", siteName: "", siteDescription: "",
-      contactEmail: "", contactPhone: "", address: "", logoUrl: "",
-    }).then((data) => {
-      if (data && data.siteName) setConfig(data);
-    }).finally(() => setLoading(false));
+    // 1. Load from localStorage instantly (no loading screen)
+    const cached = loadCache<SiteConfig>("site-config");
+    if (cached && cached.siteName) {
+      setConfig(cached);
+      setLoading(false);
+    }
+    // 2. Fetch from API in background to get latest server data
+    fetch("/api/site-config")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.siteName) {
+          setConfig(data);
+          saveCache("site-config", data);
+        }
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

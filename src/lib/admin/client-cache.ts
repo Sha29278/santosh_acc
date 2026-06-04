@@ -26,28 +26,11 @@ export function saveCache<T>(key: string, data: T): void {
   }
 }
 
-/** Load from cache first, then fetch from API. Updates cache with API response. */
-export async function cachedFetch<T>(
-  cacheKey: string,
-  apiUrl: string,
-  fallback: T,
-): Promise<T> {
-  // 1. Return cached data immediately (if available)
-  const cached = loadCache<T>(cacheKey);
-  
-  // 2. Fetch from API in background to get any server-side updates
-  try {
-    const res = await fetch(apiUrl);
-    if (res.ok) {
-      const data = (await res.json()) as T;
-      if (data) {
-        saveCache(cacheKey, data);
-        return data;
-      }
-    }
-  } catch {
-    // Network error — fall through to cache
-  }
-  
-  return cached ?? fallback;
-}
+/**
+ * React hook pattern: Load from cache instantly, then fetch from API in background.
+ *
+ * Usage in useEffect:
+ *   const cached = loadCache("my-key");
+ *   if (cached) { setData(cached); setLoading(false); }
+ *   fetchFromAPI().then(data => { setData(data); saveCache("my-key", data); setLoading(false); });
+ */

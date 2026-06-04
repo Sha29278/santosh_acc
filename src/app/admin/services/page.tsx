@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Save, Plus, Trash2, GripVertical } from "lucide-react";
-import { cachedFetch, saveCache } from "@/lib/admin/client-cache";
+import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
 interface Service {
   id: string;
@@ -41,8 +41,18 @@ export default function AdminServices() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    cachedFetch<Service[]>("services", "/api/data/services", [])
-      .then((data) => setServices(Array.isArray(data) ? data : []))
+    const cached = loadCache<Service[]>("services");
+    if (cached && cached.length > 0) {
+      setServices(cached);
+      setLoading(false);
+    }
+    fetch("/api/data/services")
+      .then((r) => r.json())
+      .then((data) => {
+        const svc = Array.isArray(data) ? data : [];
+        setServices(svc);
+        saveCache("services", svc);
+      })
       .finally(() => setLoading(false));
   }, []);
 
