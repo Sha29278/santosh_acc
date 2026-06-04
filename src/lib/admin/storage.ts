@@ -5,6 +5,17 @@ import { commitTextFile, commitBinaryFile, deleteRepoFile, isGitDeployEnabled } 
 const DATA_DIR = path.join(process.cwd(), "data");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 
+// ---------- in-memory cache for Vercel persistence ----------
+
+/**
+ * In-memory cache for JSON data. On Vercel, the filesystem is read-only, so
+ * writes go to GitHub only. Between the save and the next Vercel deploy,
+ * this cache ensures readJSON returns the latest data instead of stale
+ * build-time data. Each serverless function instance has its own cache,
+ * so this covers same-instance reads (admin panel saves then re-reads).
+ */
+const cache = new Map<string, unknown>();
+
 // ---------- helpers ----------
 
 function ensureDir(dir: string) {
@@ -40,13 +51,21 @@ function safeUnlinkSync(filepath: string): boolean {
   }
 }
 
-// ---------- JSON data (filesystem + git deploy) ----------
+// ---------- JSON data (filesystem + cache + git deploy) ----------
 
 /**
- * Read JSON data from the local filesystem (works on Vercel since data/ is baked into build).
- * Falls back to default if file doesn't exist or can't be read.
+ * Read JSON data — checks cache first, then filesystem.
+ * On Vercel, cache holds data saved during this serverless instance's lifetime.
+ * Filesystem holds data from the last build (baked in at deploy time).
+ * Falls back to default if neither has the data.
  */
 export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
+  // 1. Check in-memory cache (most recent, written during this instance)
+  if (cache.has(filename)) {
+    return cache.get(filename) as T;
+  }
+
+  // 2. Read from filesystem (from last build/deploy)
   try {
     const fp = filePath(filename);
     if (!fs.existsSync(fp)) return fallback;
@@ -57,17 +76,20 @@ export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
 }
 
 /**
- * Write JSON data to filesystem (for local dev) AND commit to GitHub.
- * On Vercel, the filesystem write is skipped (read-only) — only the GitHub commit matters.
- * Vercel auto-deploys after the commit, and the next build picks up the new file.
+ * Write JSON data to cache + filesystem (local dev) + commit to GitHub.
+ * Cache ensures subsequent reads return the latest data immediately,
+ * even on Vercel where filesystem is read-only and deploy takes ~60s.
  */
 export async function writeJSON<T>(filename: string, data: T): Promise<void> {
   const content = JSON.stringify(data, null, 2);
 
-  // Write to filesystem (works locally, silently fails on Vercel)
+  // 1. Update in-memory cache (immediate reads)
+  cache.set(filename, data);
+
+  // 2. Write to filesystem (works locally, silently fails on Vercel)
   safeWriteFileSync(filePath(filename), content);
 
-  // Commit to GitHub (triggers Vercel redeploy)
+  // 3. Commit to GitHub (triggers Vercel redeploy for other instances)
   if (isGitDeployEnabled()) {
     const committed = await commitTextFile(
       `data/${filename}`,
@@ -84,7 +106,6 @@ export async function writeJSON<T>(filename: string, data: T): Promise<void> {
 
 /**
  * Upload a file to filesystem (local dev) AND commit to GitHub.
- * On Vercel, only the GitHub commit happens — images are served via /api/uploads/[file] route.
  * If oldUrl is provided, the old file is deleted after successful upload.
  * Returns the public URL of the uploaded file.
  */
@@ -166,8 +187,7 @@ export async function deleteFileByUrl(url: string): Promise<void> {
 }
 
 /**
- * List all uploaded files — reads from filesystem (works on Vercel since uploads/ is baked into build).
- * New uploads made after deployment won't appear until next build, but that's handled by GitHub commit.
+ * List all uploaded files — reads from filesystem.
  */
 export async function listUploads(): Promise<string[]> {
   try {

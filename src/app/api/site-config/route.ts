@@ -16,6 +16,8 @@ interface SiteConfig {
 
 export const dynamic = "force-dynamic";
 
+const MASKED_PASSWORD = "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022";
+
 async function checkAuth() {
   return (await cookies()).get("admin_token")?.value === "authenticated";
 }
@@ -32,7 +34,7 @@ export async function GET() {
     logoUrl: "",
   });
   // Never expose password in response
-  const safe = { ...config, adminPassword: "••••••••" };
+  const safe = { ...config, adminPassword: MASKED_PASSWORD };
   return NextResponse.json(safe);
 }
 
@@ -53,19 +55,19 @@ export async function PUT(request: Request) {
       logoUrl: "",
     });
 
-    // Keep existing password unless a new one is provided
+    // Use ?? (nullish coalescing) so fields can be set to empty string
     const updated: SiteConfig = {
-      adminUsername: body.adminUsername || current.adminUsername,
-      adminPassword: body.adminPassword && body.adminPassword !== "••••••••"
+      adminUsername: body.adminUsername ?? current.adminUsername,
+      adminPassword: body.adminPassword && body.adminPassword !== MASKED_PASSWORD
         ? body.adminPassword
         : current.adminPassword,
-      adminEmail: body.adminEmail || current.adminEmail || "",
-      siteName: body.siteName || current.siteName,
-      siteDescription: body.siteDescription || current.siteDescription,
-      contactEmail: body.contactEmail || current.contactEmail,
-      contactPhone: body.contactPhone || current.contactPhone,
-      address: body.address || current.address,
-      logoUrl: body.logoUrl !== undefined ? body.logoUrl : current.logoUrl || "",
+      adminEmail: body.adminEmail ?? current.adminEmail ?? "",
+      siteName: body.siteName ?? current.siteName,
+      siteDescription: body.siteDescription ?? current.siteDescription,
+      contactEmail: body.contactEmail ?? current.contactEmail,
+      contactPhone: body.contactPhone ?? current.contactPhone,
+      address: body.address ?? current.address,
+      logoUrl: body.logoUrl !== undefined ? body.logoUrl : (current.logoUrl || ""),
     };
 
     await writeJSON("site-config.json", updated);
