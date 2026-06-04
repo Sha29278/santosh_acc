@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const config = readJSON<AdminConfig>("site-config.json", {
+    const config = await readJSON<AdminConfig>("site-config.json", {
       adminUsername: "admin",
       adminPassword: "admin@123",
       siteName: "TaxEase",
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     config.adminUsername = username;
     config.adminPassword = password;
     config.adminEmail = email;
-    writeJSON("site-config.json", config);
+    await writeJSON("site-config.json", config);
 
     // Auto-login after signup
     const response = NextResponse.json({

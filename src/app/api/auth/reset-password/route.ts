@@ -38,7 +38,7 @@ export async function POST() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const config = readJSON("site-config.json", {
+  const config = await readJSON<{ adminUsername: string; adminPassword: string }>("site-config.json", {
     adminUsername: "admin",
     adminPassword: "admin@123",
   });
@@ -50,7 +50,7 @@ export async function POST() {
   // Generate new password
   const newPassword = generatePassword();
   config.adminPassword = newPassword;
-  writeJSON("site-config.json", config);
+  await writeJSON("site-config.json", config);
 
   return NextResponse.json({
     success: true,

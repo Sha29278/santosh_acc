@@ -27,7 +27,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const blogs = readJSON<BlogPost[]>("blog-posts.json", []);
+  const blogs = await readJSON<BlogPost[]>("blog-posts.json", []);
   const post = blogs.find((b) => b.id === parseInt(id) || b.slug === id);
   if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(post);
@@ -42,7 +42,7 @@ export async function PUT(
   }
   const { id } = await params;
   const body = await request.json();
-  const blogs = readJSON<BlogPost[]>("blog-posts.json", []);
+  const blogs = await readJSON<BlogPost[]>("blog-posts.json", []);
   const index = blogs.findIndex((b) => b.id === parseInt(id));
   if (index === -1) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
@@ -52,7 +52,7 @@ export async function PUT(
     id: blogs[index].id,
     updatedAt: new Date().toISOString(),
   };
-  writeJSON("blog-posts.json", blogs);
+  await writeJSON("blog-posts.json", blogs);
   return NextResponse.json(blogs[index]);
 }
 
@@ -64,11 +64,11 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { id } = await params;
-  const blogs = readJSON<BlogPost[]>("blog-posts.json", []);
+  const blogs = await readJSON<BlogPost[]>("blog-posts.json", []);
   const filtered = blogs.filter((b) => b.id !== parseInt(id));
   if (filtered.length === blogs.length) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  writeJSON("blog-posts.json", filtered);
+  await writeJSON("blog-posts.json", filtered);
   return NextResponse.json({ success: true });
 }

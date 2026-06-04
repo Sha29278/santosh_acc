@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { readJSON } from "@/lib/admin/storage";
 
 interface SiteData {
   services: Record<string, unknown>[];
@@ -15,19 +14,11 @@ interface SiteData {
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const dataDir = path.join(process.cwd(), "data");
-
-  const readFile = (filename: string, fallback: Record<string, unknown>[]) => {
-    const fp = path.join(dataDir, filename);
-    if (!fs.existsSync(fp)) return fallback;
-    return JSON.parse(fs.readFileSync(fp, "utf-8"));
-  };
-
   const siteData: SiteData = {
-    services: readFile("services.json", []),
-    testimonials: readFile("testimonials.json", []),
-    faqs: readFile("faqs.json", []),
-    blogPosts: readFile("blog-posts.json", []),
+    services: await readJSON("services.json", []),
+    testimonials: await readJSON("testimonials.json", []),
+    faqs: await readJSON("faqs.json", []),
+    blogPosts: await readJSON("blog-posts.json", []),
     whyChooseUs: [
       { title: "10+ Years Experience", description: "Over a decade of excellence in taxation and compliance services across India.", icon: "Award", stat: "10+", suffix: "Years" },
       { title: "5000+ Clients", description: "Trusted by thousands of businesses, startups, and individuals nationwide.", icon: "Users", stat: "5000+", suffix: "Clients" },

@@ -23,7 +23,7 @@ function checkAuth() {
 }
 
 export async function GET() {
-  const blogs = readJSON<BlogPost[]>("blog-posts.json", []);
+  const blogs = await readJSON<BlogPost[]>("blog-posts.json", []);
   return NextResponse.json(blogs);
 }
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = await request.json();
-  const blogs = readJSON<BlogPost[]>("blog-posts.json", []);
+  const blogs = await readJSON<BlogPost[]>("blog-posts.json", []);
   const maxId = blogs.reduce((max, b) => Math.max(max, b.id), 0);
   const now = new Date().toISOString();
 
@@ -53,6 +53,6 @@ export async function POST(request: Request) {
   };
 
   blogs.push(newPost);
-  writeJSON("blog-posts.json", blogs);
+  await writeJSON("blog-posts.json", blogs);
   return NextResponse.json(newPost, { status: 201 });
 }

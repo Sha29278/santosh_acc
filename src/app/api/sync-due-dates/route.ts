@@ -18,7 +18,7 @@ export async function GET() {
     let items = generateDueDates();
 
     // Apply admin overrides (e.g., when government extends a deadline)
-    const overrides = readJSON<DueDateOverride[]>("due-date-overrides.json", []);
+    const overrides = await readJSON<DueDateOverride[]>("due-date-overrides.json", []);
     const activeOverrides = overrides.filter((o) => o.active);
 
     if (activeOverrides.length > 0) {
@@ -36,7 +36,7 @@ export async function GET() {
     }
 
     // Persist to due-dates.json so the rest of the app can read it
-    writeJSON("due-dates.json", items);
+    await writeJSON("due-dates.json", items);
 
     return NextResponse.json({
       success: true,

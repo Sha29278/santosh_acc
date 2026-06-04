@@ -13,7 +13,7 @@ async function checkAuth() {
 }
 
 export async function GET() {
-  const overrides = readJSON<DueDateOverride[]>("due-date-overrides.json", []);
+  const overrides = await readJSON<DueDateOverride[]>("due-date-overrides.json", []);
   return NextResponse.json(overrides);
 }
 
@@ -25,6 +25,6 @@ export async function PUT(request: Request) {
   if (!Array.isArray(body)) {
     return NextResponse.json({ error: "Expected an array of overrides" }, { status: 400 });
   }
-  writeJSON("due-date-overrides.json", body);
+  await writeJSON("due-date-overrides.json", body);
   return NextResponse.json({ success: true, count: body.length });
 }

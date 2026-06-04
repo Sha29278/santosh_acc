@@ -9,7 +9,7 @@ async function checkAuth() {
 }
 
 export async function GET() {
-  const data = readJSON<Record<string, unknown>[]>("testimonials.json", []);
+  const data = await readJSON<Record<string, unknown>[]>("testimonials.json", []);
   return NextResponse.json(data);
 }
 
@@ -22,7 +22,7 @@ export async function PUT(request: Request) {
     if (!Array.isArray(body)) {
       return NextResponse.json({ error: "Invalid data format" }, { status: 400 });
     }
-    writeJSON("testimonials.json", body);
+    await writeJSON("testimonials.json", body);
     return NextResponse.json({ success: true, message: "Testimonials saved successfully!" });
   } catch {
     return NextResponse.json({ error: "Failed to save testimonials" }, { status: 500 });

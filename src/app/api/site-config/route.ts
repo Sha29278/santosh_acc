@@ -21,7 +21,7 @@ async function checkAuth() {
 }
 
 export async function GET() {
-  const config = readJSON<SiteConfig>("site-config.json", {
+  const config = await readJSON<SiteConfig>("site-config.json", {
     adminUsername: "admin",
     adminPassword: "admin@123",
     siteName: "AccTax Solutions",
@@ -42,7 +42,7 @@ export async function PUT(request: Request) {
   }
   try {
     const body = await request.json();
-    const current = readJSON<SiteConfig>("site-config.json", {
+    const current = await readJSON<SiteConfig>("site-config.json", {
       adminUsername: "admin",
       adminPassword: "admin@123",
       siteName: "AccTax Solutions",
@@ -68,7 +68,7 @@ export async function PUT(request: Request) {
       logoUrl: body.logoUrl !== undefined ? body.logoUrl : current.logoUrl || "",
     };
 
-    writeJSON("site-config.json", updated);
+    await writeJSON("site-config.json", updated);
     return NextResponse.json({ success: true, message: "Settings saved successfully!" });
   } catch {
     return NextResponse.json({ error: "Failed to save settings" }, { status: 500 });

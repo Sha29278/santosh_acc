@@ -17,7 +17,7 @@ export async function GET(
   if (!KEYS.includes(key as DataKey)) {
     return NextResponse.json({ error: "Invalid key" }, { status: 400 });
   }
-  const data = readJSON(`${key}.json`, []);
+  const data = await readJSON(`${key}.json`, []);
   return NextResponse.json(data);
 }
 
@@ -33,6 +33,6 @@ export async function PUT(
     return NextResponse.json({ error: "Invalid key" }, { status: 400 });
   }
   const body = await request.json();
-  writeJSON(`${key}.json`, body);
+  await writeJSON(`${key}.json`, body);
   return NextResponse.json({ success: true });
 }

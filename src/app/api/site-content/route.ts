@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import fs from "fs";
-import path from "path";
+import { readJSON, writeJSON } from "@/lib/admin/storage";
 
 export const dynamic = "force-dynamic";
 
@@ -216,111 +215,20 @@ const DEFAULT_CONTENT: Record<string, Record<string, unknown>> = {
   privacyPolicy: {
     title: "Privacy Policy",
     lastUpdated: "June 1, 2026",
-    content: `At AccTax Solutions, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
-
-1. Information We Collect
-We may collect personal identification information (Name, Email Address, Phone Number, PAN, GSTIN) when you voluntarily submit forms on our website or engage our services. We also collect non-personal data such as browser type, device information, and website usage statistics through cookies and analytics tools.
-
-2. How We Use Your Information
-We use the collected information to provide and improve our tax filing and compliance services, communicate with you regarding your inquiries or filings, send periodic emails regarding updates, offers, and tax-related news, comply with legal obligations and regulatory requirements.
-
-3. Data Protection & Security
-We implement industry-standard security measures including SSL encryption, secure servers, and restricted data access to protect your personal information. However, no method of transmission over the Internet is 100% secure.
-
-4. Sharing Your Information
-We do not sell, trade, or rent your personal information to third parties. We may share information with trusted service providers who assist us in operating our website and services, provided they agree to keep your information confidential, or when required by law.
-
-5. Cookies
-Our website uses cookies to enhance user experience. You can choose to disable cookies through your browser settings, though this may affect some functionality.
-
-6. Your Rights
-You have the right to request access to, correction of, or deletion of your personal data held by us. To exercise these rights, please contact us at info@acctaxsolutions.in.
-
-7. Third-Party Links
-Our website may contain links to third-party sites. We are not responsible for the privacy practices of these external sites.
-
-8. Changes to This Policy
-We reserve the right to update this Privacy Policy at any time. Changes will be posted on this page with an updated revision date.
-
-9. Contact Us
-If you have questions about this Privacy Policy, please contact us at:
-AccTax Solutions
-Fancy Ali, Jorhat, Assam - 785001
-Email: info@acctaxsolutions.in
-Phone: +91 9613461462`,
+    content: `At AccTax Solutions, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.\n\n1. Information We Collect\nWe may collect personal identification information (Name, Email Address, Phone Number, PAN, GSTIN) when you voluntarily submit forms on our website or engage our services. We also collect non-personal data such as browser type, device information, and website usage statistics through cookies and analytics tools.\n\n2. How We Use Your Information\nWe use the collected information to provide and improve our tax filing and compliance services, communicate with you regarding your inquiries or filings, send periodic emails regarding updates, offers, and tax-related news, comply with legal obligations and regulatory requirements.\n\n3. Data Protection & Security\nWe implement industry-standard security measures including SSL encryption, secure servers, and restricted data access to protect your personal information. However, no method of transmission over the Internet is 100% secure.\n\n4. Sharing Your Information\nWe do not sell, trade, or rent your personal information to third parties. We may share information with trusted service providers who assist us in operating our website and services, provided they agree to keep your information confidential, or when required by law.\n\n5. Cookies\nOur website uses cookies to enhance user experience. You can choose to disable cookies through your browser settings, though this may affect some functionality.\n\n6. Your Rights\nYou have the right to request access to, correction of, or deletion of your personal data held by us. To exercise these rights, please contact us at info@acctaxsolutions.in.\n\n7. Third-Party Links\nOur website may contain links to third-party sites. We are not responsible for the privacy practices of these external sites.\n\n8. Changes to This Policy\nWe reserve the right to update this Privacy Policy at any time. Changes will be posted on this page with an updated revision date.\n\n9. Contact Us\nIf you have questions about this Privacy Policy, please contact us at:\nAccTax Solutions\nFancy Ali, Jorhat, Assam - 785001\nEmail: info@acctaxsolutions.in\nPhone: +91 9613461462`,
   },
   terms: {
     title: "Terms & Conditions",
     lastUpdated: "June 1, 2026",
-    content: `Welcome to AccTax Solutions. By accessing our website or using our services, you agree to be bound by the following Terms & Conditions.
-
-1. Acceptance of Terms
-By using our website and services, you acknowledge that you have read, understood, and agree to be bound by these Terms & Conditions. If you do not agree, please do not use our services.
-
-2. Services Description
-AccTax Solutions provides taxation, accounting, compliance, and business registration services. We strive to ensure accuracy in all filings but recommend clients review documents before submission.
-
-3. Client Responsibilities
-You agree to provide accurate, complete, and timely information required for the provision of our services. You are responsible for the accuracy of the information you provide. AccTax Solutions is not liable for penalties arising from incorrect information provided by you.
-
-4. Fees & Payment
-Service fees are as per the agreed pricing plan. All fees are non-refundable unless otherwise stated. We reserve the right to modify our pricing with prior notice.
-
-5. Limitation of Liability
-AccTax Solutions shall not be liable for any indirect, incidental, special, or consequential damages arising from the use of our services, including but not limited to tax penalties resulting from delayed information provided by the client or changes in tax laws.
-
-6. Intellectual Property
-All content on our website, including text, graphics, logos, and software, is the property of AccTax Solutions and is protected by applicable intellectual property laws.
-
-7. Termination
-We reserve the right to terminate or suspend services if you breach these terms or if we are unable to verify the information provided.
-
-8. Governing Law
-These Terms & Conditions are governed by the laws of India. Any disputes shall be subject to the jurisdiction of the courts in Jorhat, Assam.
-
-9. Changes to Terms
-We may update these Terms & Conditions at any time. Continued use of our services after changes constitutes acceptance of the new terms.
-
-10. Contact
-For questions regarding these terms, contact us at:
-AccTax Solutions
-Fancy Ali, Jorhat, Assam - 785001
-Email: info@acctaxsolutions.in
-Phone: +91 9613461462`,
+    content: `Welcome to AccTax Solutions. By accessing our website or using our services, you agree to be bound by the following Terms & Conditions.\n\n1. Acceptance of Terms\nBy using our website and services, you acknowledge that you have read, understood, and agree to be bound by these Terms & Conditions. If you do not agree, please do not use our services.\n\n2. Services Description\nAccTax Solutions provides taxation, accounting, compliance, and business registration services. We strive to ensure accuracy in all filings but recommend clients review documents before submission.\n\n3. Client Responsibilities\nYou agree to provide accurate, complete, and timely information required for the provision of our services. You are responsible for the accuracy of the information you provide. AccTax Solutions is not liable for penalties arising from incorrect information provided by you.\n\n4. Fees & Payment\nService fees are as per the agreed pricing plan. All fees are non-refundable unless otherwise stated. We reserve the right to modify our pricing with prior notice.\n\n5. Limitation of Liability\nAccTax Solutions shall not be liable for any indirect, incidental, special, or consequential damages arising from the use of our services, including but not limited to tax penalties resulting from delayed information provided by the client or changes in tax laws.\n\n6. Intellectual Property\nAll content on our website, including text, graphics, logos, and software, is the property of AccTax Solutions and is protected by applicable intellectual property laws.\n\n7. Termination\nWe reserve the right to terminate or suspend services if you breach these terms or if we are unable to verify the information provided.\n\n8. Governing Law\nThese Terms & Conditions are governed by the laws of India. Any disputes shall be subject to the jurisdiction of the courts in Jorhat, Assam.\n\n9. Changes to Terms\nWe may update these Terms & Conditions at any time. Continued use of our services after changes constitutes acceptance of the new terms.\n\n10. Contact\nFor questions regarding these terms, contact us at:\nAccTax Solutions\nFancy Ali, Jorhat, Assam - 785001\nEmail: info@acctaxsolutions.in\nPhone: +91 9613461462`,
   },
 };
 
-// On Vercel (production), the filesystem is read-only except /tmp.
-// We write to /tmp first for runtime persistence, falling back to the data/ directory in dev.
-function isVercel(): boolean {
-  return !!process.env.VERCEL;
-}
-
-function getDataPath(): string {
-  if (isVercel()) {
-    return path.join("/tmp", "site-content.json");
-  }
-  return path.join(process.cwd(), "data", "site-content.json");
-}
-
-function readContent(): Record<string, Record<string, unknown>> {
-  // On Vercel, try /tmp first (runtime writes), then fall back to the data dir (build-time file)
-  const paths = isVercel()
-    ? [path.join("/tmp", "site-content.json"), path.join(process.cwd(), "data", "site-content.json")]
-    : [path.join(process.cwd(), "data", "site-content.json")];
-  
-  for (const fp of paths) {
-    try {
-      if (fs.existsSync(fp)) {
-        return JSON.parse(fs.readFileSync(fp, "utf-8"));
-      }
-    } catch {}
-  }
-  return DEFAULT_CONTENT;
-}
-
 export async function GET() {
-  const content = readContent();
+  const content = await readJSON<Record<string, Record<string, unknown>>>(
+    "site-content.json",
+    DEFAULT_CONTENT,
+  );
   return NextResponse.json(content);
 }
 
@@ -330,10 +238,7 @@ export async function PUT(request: Request) {
   }
   try {
     const body = await request.json();
-    const fp = getDataPath();
-    const dir = path.dirname(fp);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(fp, JSON.stringify(body, null, 2), "utf-8");
+    await writeJSON("site-content.json", body);
     return NextResponse.json({ success: true, message: "Content saved successfully!" });
   } catch {
     return NextResponse.json({ error: "Failed to save content" }, { status: 500 });
