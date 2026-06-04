@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import SectionTitle from "@/components/ui/section-title";
 import Button from "@/components/ui/button";
@@ -8,9 +8,35 @@ import { Card } from "@/components/ui/card";
 import { Phone, Mail, MapPin, MessageCircle, Send, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
+interface SiteConfig {
+  contactPhone?: string;
+  contactEmail?: string;
+  address?: string;
+}
+
 export default function ContactSection() {
   const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
+  const [config, setConfig] = useState<SiteConfig>({});
+
+  useEffect(() => {
+    fetch("/api/site-config")
+      .then((r) => r.json())
+      .then((data) => {
+        setConfig({
+          contactPhone: data?.contactPhone,
+          contactEmail: data?.contactEmail,
+          address: data?.address,
+        });
+      })
+      .catch(() => {});
+  }, []);
+
+  const phone = config.contactPhone || "+91 9613461462";
+  const email = config.contactEmail || "info@acctaxsolutions.in";
+  const address = config.address || "Fancy Ali, Jorhat (Assam) — 785001";
+  const phoneHref = phone.replace(/\s+/g, "");
+  const whatsappNumber = phone.replace(/[^0-9]/g, "");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +61,6 @@ export default function ContactSection() {
             viewport={{ once: true }}
           >
             <Card className="p-8 relative overflow-hidden">
-              {/* Gradient accent */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-500" />
               {submitted ? (
                 <div className="text-center py-12">
@@ -73,7 +98,7 @@ export default function ContactSection() {
                       type="tel"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all"
-                      placeholder="+91 9613461462"
+                      placeholder={phone}
                     />
                   </div>
                   <div>
@@ -119,8 +144,8 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-1">{t.contact.callUs}</h3>
-                  <a href="tel:+919613461462" className="text-blue-600 hover:underline font-medium">
-                    +91 9613461462
+                  <a href={`tel:${phoneHref}`} className="text-blue-600 hover:underline font-medium">
+                    {phone}
                   </a>
                   <p className="text-sm text-slate-500 mt-1">{t.contact.workingHours}</p>
                 </div>
@@ -134,8 +159,8 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-1">{t.contact.emailUs}</h3>
-                  <a href="mailto:info@acctaxsolutions.in" className="text-indigo-600 hover:underline font-medium">
-                    info@acctaxsolutions.in
+                  <a href={`mailto:${email}`} className="text-indigo-600 hover:underline font-medium">
+                    {email}
                   </a>
                   <p className="text-sm text-slate-500 mt-1">{t.contact.replyTime}</p>
                 </div>
@@ -149,7 +174,7 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-1">{t.contact.visitUs}</h3>
-                  <p className="text-slate-600">Fancy Ali, Jorhat (Assam) — 785001</p>
+                  <p className="text-slate-600">{address}</p>
                   <p className="text-sm text-slate-500 mt-1">{t.contact.byAppointment}</p>
                 </div>
               </div>
@@ -181,7 +206,7 @@ export default function ContactSection() {
                 </div>
               </div>
               <a
-                href="https://wa.me/919613461462"
+                href={`https://wa.me/${whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 inline-flex items-center gap-2 px-6 py-3 bg-white text-emerald-700 rounded-xl font-medium text-sm hover:bg-emerald-50 transition-colors shadow-lg"

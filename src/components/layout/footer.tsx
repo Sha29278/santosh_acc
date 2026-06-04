@@ -8,6 +8,7 @@ import Logo from "@/components/ui/logo";
 
 export default function Footer() {
   const [logoUrl, setLogoUrl] = useState("");
+  const [config, setConfig] = useState<{ contactPhone?: string; contactEmail?: string; address?: string }>({});
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -15,6 +16,11 @@ export default function Footer() {
       .then((r) => r.json())
       .then((data) => {
         if (data?.logoUrl) setLogoUrl(data.logoUrl);
+        setConfig({
+          contactPhone: data?.contactPhone,
+          contactEmail: data?.contactEmail,
+          address: data?.address,
+        });
       })
       .catch(() => {});
   }, []);
@@ -59,23 +65,23 @@ export default function Footer() {
               {t.footer.tagline}
             </p>
             <div className="space-y-3">
-              <a href="tel:+919613461462" className="flex items-center gap-3 text-sm text-slate-400 hover:text-blue-400 transition-colors group">
+              <a href={`tel:${(config.contactPhone || '+919613461462').replace(/\s+/g, '')}`} className="flex items-center gap-3 text-sm text-slate-400 hover:text-blue-400 transition-colors group">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/30 transition-colors">
                   <Phone className="w-4 h-4 text-blue-400" />
                 </div>
-                +91 9613461462
+                {config.contactPhone || '+91 9613461462'}
               </a>
-              <a href="mailto:info@acctaxsolutions.in" className="flex items-center gap-3 text-sm text-slate-400 hover:text-indigo-400 transition-colors group">
+              <a href={`mailto:${config.contactEmail || 'info@acctaxsolutions.in'}`} className="flex items-center gap-3 text-sm text-slate-400 hover:text-indigo-400 transition-colors group">
                 <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors">
                   <Mail className="w-4 h-4 text-indigo-400" />
                 </div>
-                info@acctaxsolutions.in
+                {config.contactEmail || 'info@acctaxsolutions.in'}
               </a>
               <div className="flex items-start gap-3 text-sm text-slate-400 group">
                 <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center">
                   <MapPin className="w-4 h-4 text-sky-400" />
                 </div>
-                <span className="pt-1.5">Fancy Ali, Jorhat, Assam — 785001</span>
+                <span className="pt-1.5">{config.address || 'Fancy Ali, Jorhat, Assam — 785001'}</span>
               </div>
             </div>
           </div>

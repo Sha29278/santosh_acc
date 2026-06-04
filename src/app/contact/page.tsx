@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ContactSection from "@/components/sections/contact-section";
 import SectionTitle from "@/components/ui/section-title";
@@ -7,20 +8,45 @@ import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Mail, ExternalLink, Sparkles, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
-const offices = [
-  {
-    city: "Jorhat (HQ)",
-    address: "Fancy Ali, Jorhat, Assam - 785001",
-    phone: "+91 9613461462",
-    email: "info@acctaxsolutions.in",
-    gradient: "from-blue-600 to-indigo-600",
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
-  },
-];
+interface SiteConfig {
+  contactPhone?: string;
+  contactEmail?: string;
+  address?: string;
+}
 
 export default function ContactPage() {
   const { t } = useLanguage();
+  const [config, setConfig] = useState<SiteConfig>({});
+
+  useEffect(() => {
+    fetch("/api/site-config")
+      .then((r) => r.json())
+      .then((data) => {
+        setConfig({
+          contactPhone: data?.contactPhone,
+          contactEmail: data?.contactEmail,
+          address: data?.address,
+        });
+      })
+      .catch(() => {});
+  }, []);
+
+  const phone = config.contactPhone || "+91 9613461462";
+  const email = config.contactEmail || "info@acctaxsolutions.in";
+  const address = config.address || "Fancy Ali, Jorhat, Assam - 785001";
+
+  const offices = [
+    {
+      city: "Jorhat (HQ)",
+      address,
+      phone,
+      email,
+      gradient: "from-blue-600 to-indigo-600",
+      iconBg: "bg-blue-100",
+      iconColor: "text-blue-600",
+    },
+  ];
+
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -74,9 +100,7 @@ export default function ContactPage() {
                 transition={{ delay: i * 0.1 }}
               >
                 <Card className="h-full relative overflow-hidden group hover:-translate-y-1.5 transition-all duration-300 hover:shadow-xl">
-                  {/* Gradient accent top */}
                   <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${office.gradient} opacity-80`} />
-                  {/* Gradient side accent */}
                   <div className={`absolute top-0 left-0 w-1 h-0 group-hover:h-full bg-gradient-to-b ${office.gradient} transition-all duration-500 rounded-full`} />
 
                   <div className="flex items-start gap-4 mb-4">
@@ -92,7 +116,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="space-y-2.5 ml-0.5">
-                    <a href={`tel:${office.phone}`} className="flex items-center gap-3 text-sm text-slate-600 hover:text-blue-600 transition-colors group/phone">
+                    <a href={`tel:${office.phone.replace(/\s+/g, "")}`} className="flex items-center gap-3 text-sm text-slate-600 hover:text-blue-600 transition-colors group/phone">
                       <span className={`w-8 h-8 rounded-lg ${office.iconBg} flex items-center justify-center`}>
                         <Phone className={`w-4 h-4 ${office.iconColor}`} />
                       </span>
@@ -107,7 +131,7 @@ export default function ContactPage() {
                   </div>
 
                   <a
-                    href={office.city === "Jorhat (HQ)" ? "https://maps.google.com/?q=26.759569,94.217385" : `https://maps.google.com/?q=${office.address}`}
+                    href="https://maps.google.com/?q=26.759569,94.217385"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 mt-5 text-xs font-medium text-slate-400 hover:text-blue-600 transition-colors group/map"

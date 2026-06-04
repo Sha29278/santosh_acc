@@ -23,6 +23,7 @@ const navLinks = (t: ReturnType<typeof useLanguage>["t"]) => [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState("");
+  const [phone, setPhone] = useState("+91 9613461462");
   const pathname = usePathname();
   const { t } = useLanguage();
 
@@ -31,6 +32,7 @@ export default function Navbar() {
       .then((r) => r.json())
       .then((data) => {
         if (data?.logoUrl) setLogoUrl(data.logoUrl);
+        if (data?.contactPhone) setPhone(data.contactPhone);
       })
       .catch(() => {});
   }, []);
@@ -86,9 +88,9 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <a href="tel:+919613461462" className="flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors">
+            <a href={`tel:${phone.replace(/\s+/g, '')}`} className="flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors">
               <Phone className="w-4 h-4" />
-              <span>+91 9613461462</span>
+              <span>{phone}</span>
             </a>
             <Link
               href="/contact"
