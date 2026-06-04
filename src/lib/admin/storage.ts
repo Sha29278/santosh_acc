@@ -5,9 +5,6 @@ import { commitTextFile, commitBinaryFile, deleteRepoFile, isGitDeployEnabled } 
 const DATA_DIR = path.join(process.cwd(), "data");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 
-// Detect Vercel serverless environment (filesystem is read-only except /tmp)
-const IS_VERCEL = !!process.env.VERCEL;
-
 // ---------- helpers ----------
 
 function ensureDir(dir: string) {
@@ -29,6 +26,7 @@ function safeWriteFileSync(filepath: string, data: string | Buffer): boolean {
     fs.writeFileSync(filepath, data);
     return true;
   } catch {
+    // On Vercel, filesystem is read-only — this is expected
     return false;
   }
 }
@@ -71,11 +69,14 @@ export async function writeJSON<T>(filename: string, data: T): Promise<void> {
 
   // Commit to GitHub (triggers Vercel redeploy)
   if (isGitDeployEnabled()) {
-    await commitTextFile(
+    const committed = await commitTextFile(
       `data/${filename}`,
       content,
       `admin: update ${filename.replace(".json", "")}`,
     );
+    if (!committed) {
+      console.error(`[git-deploy] Failed to commit ${filename} to GitHub — changes may not persist`);
+    }
   }
 }
 
