@@ -5,22 +5,48 @@ import { commitTextFile, commitBinaryFile, deleteRepoFile, isGitDeployEnabled } 
 const DATA_DIR = path.join(process.cwd(), "data");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 
+// Detect Vercel serverless environment (filesystem is read-only except /tmp)
+const IS_VERCEL = !!process.env.VERCEL;
+
 // ---------- helpers ----------
 
 function ensureDir(dir: string) {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  try {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  } catch {
+    // Vercel: can't create dirs, that's OK
+  }
 }
 
 function filePath(filename: string): string {
-  ensureDir(DATA_DIR);
   return path.join(DATA_DIR, filename);
+}
+
+/** Safe filesystem write — returns false on Vercel (read-only) or errors */
+function safeWriteFileSync(filepath: string, data: string | Buffer): boolean {
+  try {
+    ensureDir(path.dirname(filepath));
+    fs.writeFileSync(filepath, data);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function safeUnlinkSync(filepath: string): boolean {
+  try {
+    if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // ---------- JSON data (filesystem + git deploy) ----------
 
 /**
- * Read JSON data from the local filesystem.
- * On Vercel, this reads from the committed codebase (baked in at build time).
+ * Read JSON data from the local filesystem (works on Vercel since data/ is baked into build).
+ * Falls back to default if file doesn't exist or can't be read.
  */
 export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
   try {
@@ -33,14 +59,15 @@ export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
 }
 
 /**
- * Write JSON data to the local filesystem AND commit to GitHub.
- * On Vercel, this triggers a redeploy with the new data.
+ * Write JSON data to filesystem (for local dev) AND commit to GitHub.
+ * On Vercel, the filesystem write is skipped (read-only) — only the GitHub commit matters.
+ * Vercel auto-deploys after the commit, and the next build picks up the new file.
  */
 export async function writeJSON<T>(filename: string, data: T): Promise<void> {
-  // Write to filesystem
-  ensureDir(DATA_DIR);
   const content = JSON.stringify(data, null, 2);
-  fs.writeFileSync(filePath(filename), content, "utf-8");
+
+  // Write to filesystem (works locally, silently fails on Vercel)
+  safeWriteFileSync(filePath(filename), content);
 
   // Commit to GitHub (triggers Vercel redeploy)
   if (isGitDeployEnabled()) {
@@ -55,7 +82,8 @@ export async function writeJSON<T>(filename: string, data: T): Promise<void> {
 // ---------- File upload (filesystem + git deploy) ----------
 
 /**
- * Upload a file to the local filesystem AND commit to GitHub.
+ * Upload a file to filesystem (local dev) AND commit to GitHub.
+ * On Vercel, only the GitHub commit happens — images are served via /api/uploads/[file] route.
  * If oldUrl is provided, the old file is deleted after successful upload.
  * Returns the public URL of the uploaded file.
  */
@@ -63,15 +91,14 @@ export async function uploadFile(
   file: File,
   oldUrl?: string,
 ): Promise<string> {
-  ensureDir(UPLOADS_DIR);
   const buffer = Buffer.from(await file.arrayBuffer());
   const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+
+  // Write to local filesystem (works locally, silently fails on Vercel)
   const localPath = path.join(UPLOADS_DIR, filename);
+  safeWriteFileSync(localPath, buffer);
 
-  // Write to local filesystem
-  fs.writeFileSync(localPath, buffer);
-
-  // Commit to GitHub
+  // Commit to GitHub (this is the real persistence)
   if (isGitDeployEnabled()) {
     await commitBinaryFile(
       `public/uploads/${filename}`,
@@ -99,9 +126,8 @@ export async function saveBase64Image(
   const data = base64.replace(/^data:image\/\w+;base64,/, "");
   const buffer = Buffer.from(data, "base64");
 
-  ensureDir(UPLOADS_DIR);
-  const fullPath = path.join(UPLOADS_DIR, safeName);
-  fs.writeFileSync(fullPath, buffer);
+  // Write to local filesystem (works locally, silently fails on Vercel)
+  safeWriteFileSync(path.join(UPLOADS_DIR, safeName), buffer);
 
   // Commit to GitHub
   if (isGitDeployEnabled()) {
@@ -124,12 +150,9 @@ export async function deleteFileByUrl(url: string): Promise<void> {
 
   if (url.startsWith("/uploads/")) {
     const filename = url.replace("/uploads/", "");
-    const fullPath = path.join(process.cwd(), "public", url);
 
-    // Delete from filesystem
-    if (fs.existsSync(fullPath)) {
-      fs.unlinkSync(fullPath);
-    }
+    // Delete from filesystem (works locally, silently fails on Vercel)
+    safeUnlinkSync(path.join(process.cwd(), "public", url));
 
     // Delete from GitHub
     if (isGitDeployEnabled()) {
@@ -142,9 +165,14 @@ export async function deleteFileByUrl(url: string): Promise<void> {
 }
 
 /**
- * List all uploaded files from the local filesystem.
+ * List all uploaded files — reads from filesystem (works on Vercel since uploads/ is baked into build).
+ * New uploads made after deployment won't appear until next build, but that's handled by GitHub commit.
  */
 export async function listUploads(): Promise<string[]> {
-  ensureDir(UPLOADS_DIR);
-  return fs.readdirSync(UPLOADS_DIR).map((f) => `/uploads/${f}`);
+  try {
+    ensureDir(UPLOADS_DIR);
+    return fs.readdirSync(UPLOADS_DIR).map((f) => `/uploads/${f}`);
+  } catch {
+    return [];
+  }
 }
