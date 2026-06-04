@@ -103,25 +103,29 @@ export async function uploadFile(
   file: File,
   oldUrl?: string,
 ): Promise<string> {
-  // Delete old file if replacing
-  if (oldUrl) {
-    await deleteFileByUrl(oldUrl);
-  }
+  let url: string;
 
   // On Vercel with Blob token → use Vercel Blob
   if (isVercel() && process.env.BLOB_READ_WRITE_TOKEN) {
     const { put } = await import("@vercel/blob");
     const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
     const blob = await put(filename, file, { access: "public" });
-    return blob.url;
+    url = blob.url;
+  } else {
+    // Local dev or no Blob token → filesystem
+    ensureDir(UPLOADS_DIR);
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+    fs.writeFileSync(path.join(UPLOADS_DIR, filename), buffer);
+    url = `/uploads/${filename}`;
   }
 
-  // Local dev or no Blob token → filesystem
-  ensureDir(UPLOADS_DIR);
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
-  fs.writeFileSync(path.join(UPLOADS_DIR, filename), buffer);
-  return `/uploads/${filename}`;
+  // Delete old file AFTER successful upload
+  if (oldUrl) {
+    await deleteFileByUrl(oldUrl);
+  }
+
+  return url;
 }
 
 /**
