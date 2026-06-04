@@ -25,12 +25,3 @@ export function saveCache<T>(key: string, data: T): void {
     // localStorage full or unavailable — ignore
   }
 }
-
-/**
- * React hook pattern: Load from cache instantly, then fetch from API in background.
- *
- * Usage in useEffect:
- *   const cached = loadCache("my-key");
- *   if (cached) { setData(cached); setLoading(false); }
- *   fetchFromAPI().then(data => { setData(data); saveCache("my-key", data); setLoading(false); });
- */

@@ -111,7 +111,7 @@ export default function AdminSettings() {
       const data = await res.json();
       if (data.success) {
         saveCache("site-config", config);
-        setSuccess(data.message || "Settings saved! Live on website in ~60 seconds.");
+        setSuccess(data.message || "Saved! Live on website in ~60 seconds.");
         setTimeout(() => setSuccess(""), 5000);
       }
     } catch {
