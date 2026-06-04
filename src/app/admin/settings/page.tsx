@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Save, Eye, EyeOff, Upload, Trash2 } from "lucide-react";
+import { cachedFetch, saveCache } from "@/lib/admin/client-cache";
 
 interface SiteConfig {
   adminUsername: string;
@@ -35,12 +36,13 @@ export default function AdminSettings() {
   });
 
   useEffect(() => {
-    fetch("/api/site-config")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && data.siteName) setConfig(data);
-      })
-      .finally(() => setLoading(false));
+    cachedFetch<SiteConfig>("site-config", "/api/site-config", {
+      adminUsername: "", adminPassword: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
+      adminEmail: "", siteName: "", siteDescription: "",
+      contactEmail: "", contactPhone: "", address: "", logoUrl: "",
+    }).then((data) => {
+      if (data && data.siteName) setConfig(data);
+    }).finally(() => setLoading(false));
   }, []);
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,8 +100,9 @@ export default function AdminSettings() {
       });
       const data = await res.json();
       if (data.success) {
-        setSuccess(data.message || "Settings saved successfully!");
-        setTimeout(() => setSuccess(""), 3000);
+        saveCache("site-config", config);
+        setSuccess(data.message || "Settings saved! Live on website in ~60 seconds.");
+        setTimeout(() => setSuccess(""), 5000);
       }
     } catch {
       alert("Failed to save settings");

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Save, Plus, Trash2, GripVertical } from "lucide-react";
+import { cachedFetch, saveCache } from "@/lib/admin/client-cache";
 
 interface Service {
   id: string;
@@ -40,8 +41,7 @@ export default function AdminServices() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    fetch("/api/data/services")
-      .then((r) => r.json())
+    cachedFetch<Service[]>("services", "/api/data/services", [])
       .then((data) => setServices(Array.isArray(data) ? data : []))
       .finally(() => setLoading(false));
   }, []);
@@ -55,8 +55,9 @@ export default function AdminServices() {
       body: JSON.stringify(services),
     });
     setSaving(false);
-    setSuccess("Services saved successfully!");
-    setTimeout(() => setSuccess(""), 3000);
+    saveCache("services", services);
+    setSuccess("Services saved! Live on website in ~60 seconds.");
+    setTimeout(() => setSuccess(""), 5000);
   };
 
   const addService = () => {

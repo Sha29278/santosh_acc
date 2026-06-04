@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Save, Plus, Trash2, RefreshCw } from "lucide-react";
+import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
 interface TaxSlab {
   min: number;
@@ -58,26 +59,31 @@ export default function AdminTaxSlabs() {
   });
 
   useEffect(() => {
+    const applyData = (data: Record<string, unknown>) => {
+      if (data && data.oldSlabs) {
+        setOldRegime({
+          label: "Old Tax Regime",
+          slabs: data.oldSlabs as TaxSlab[],
+          standardDeduction: (data.oldStandardDeduction as number) ?? 50000,
+          rebateLimit: (data.oldRebateLimit as number) ?? 500000,
+          rebateMax: (data.oldRebateMax as number) ?? 12500,
+        });
+        setNewRegime({
+          label: "New Tax Regime",
+          slabs: data.newSlabs as TaxSlab[],
+          standardDeduction: (data.newStandardDeduction as number) ?? 75000,
+          rebateLimit: (data.newRebateLimit as number) ?? 1200000,
+          rebateMax: (data.newRebateMax as number) ?? 60000,
+        });
+      }
+    };
+    // Load from cache first
+    const cached = loadCache<Record<string, unknown>>("tax-slabs");
+    if (cached) applyData(cached);
+    // Then fetch from API
     fetch("/api/data/tax-slabs")
       .then((r) => r.json())
-      .then((data) => {
-        if (data && data.oldSlabs) {
-          setOldRegime({
-            label: "Old Tax Regime",
-            slabs: data.oldSlabs,
-            standardDeduction: data.oldStandardDeduction ?? 50000,
-            rebateLimit: data.oldRebateLimit ?? 500000,
-            rebateMax: data.oldRebateMax ?? 12500,
-          });
-          setNewRegime({
-            label: "New Tax Regime",
-            slabs: data.newSlabs,
-            standardDeduction: data.newStandardDeduction ?? 75000,
-            rebateLimit: data.newRebateLimit ?? 1200000,
-            rebateMax: data.newRebateMax ?? 60000,
-          });
-        }
-      })
+      .then((data) => { applyData(data); saveCache("tax-slabs", data); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -104,8 +110,9 @@ export default function AdminTaxSlabs() {
     });
 
     setSaving(false);
-    setSuccess("Tax slabs saved successfully!");
-    setTimeout(() => setSuccess(""), 3000);
+    saveCache("tax-slabs", payload);
+    setSuccess("Tax slabs saved! Live on website in ~60 seconds.");
+    setTimeout(() => setSuccess(""), 5000);
   };
 
   const handleReset = () => {

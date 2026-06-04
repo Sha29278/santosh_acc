@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Save, Layout, Navigation2, Info, Award, ListOrdered,
+import { useState, useEffect } from "react";import { Save, Layout, Navigation2, Info, Award, ListOrdered,
   DollarSign, FileText, HelpCircle, Mail, Calculator,
   Calendar, Plus, Trash2,
 } from "lucide-react";
+import { cachedFetch, saveCache } from "@/lib/admin/client-cache";
 
 interface ContentData {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,8 +53,7 @@ export default function AdminContent() {
   const [content, setContent] = useState<ContentData>({});
 
   useEffect(() => {
-    fetch("/api/site-content")
-      .then((r) => r.json())
+    cachedFetch<ContentData>("site-content", "/api/site-content", {})
       .then((data) => setContent(data || {}))
       .finally(() => setLoading(false));
   }, []);
@@ -72,8 +70,9 @@ export default function AdminContent() {
       });
       const data = await res.json();
       if (data.success) {
-        setSuccess(data.message || "Content saved successfully!");
-        setTimeout(() => setSuccess(""), 3000);
+        saveCache("site-content", content);
+        setSuccess(data.message || "Content saved! Live on website in ~60 seconds.");
+        setTimeout(() => setSuccess(""), 5000);
       } else {
         setError(data.error || "Failed to save content. Please try again.");
         setTimeout(() => setError(""), 5000);

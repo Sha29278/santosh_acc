@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Save, Plus, Trash2, Star } from "lucide-react";
+import { cachedFetch, saveCache } from "@/lib/admin/client-cache";
 
 interface Testimonial {
   name: string;
@@ -28,8 +29,7 @@ export default function AdminTestimonials() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    fetch("/api/testimonials")
-      .then((r) => r.json())
+    cachedFetch<Testimonial[]>("testimonials", "/api/testimonials", [])
       .then((data) => setItems(Array.isArray(data) ? data : []))
       .finally(() => setLoading(false));
   }, []);
@@ -45,8 +45,9 @@ export default function AdminTestimonials() {
       });
       const data = await res.json();
       if (data.success) {
-        setSuccess(data.message || "Testimonials saved successfully!");
-        setTimeout(() => setSuccess(""), 3000);
+        saveCache("testimonials", items);
+        setSuccess(data.message || "Testimonials saved! Live on website in ~60 seconds.");
+        setTimeout(() => setSuccess(""), 5000);
       }
     } catch {
       alert("Failed to save testimonials");
