@@ -36,24 +36,23 @@ async function getKv() {
   }
 }
 
-// ---------- public API ----------
+// ---------- JSON data (KV + filesystem) ----------
 
 /**
  * Read JSON data from KV (on Vercel) or the local filesystem.
- * On Vercel, if KV has no data for this key, we seed it from the committed
+ * On Vercel, if KV has no data for this key, seeds it from the committed
  * JSON file so the first visitor always sees content.
  */
 export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
   const kvKey = `data:${filename.replace(".json", "")}`;
 
-  // Try Vercel KV first
   const kv = await getKv();
   if (kv) {
     try {
       const cached = await kv.get<T>(kvKey);
       if (cached !== null && cached !== undefined) return cached;
 
-      // KV empty → seed from committed file so the site has content
+      // KV empty → seed from committed file
       const fp = filePath(filename);
       if (fs.existsSync(fp)) {
         const fileData = JSON.parse(fs.readFileSync(fp, "utf-8")) as T;
@@ -65,7 +64,6 @@ export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
     }
   }
 
-  // Local dev or KV failure → filesystem
   try {
     const fp = filePath(filename);
     if (!fs.existsSync(fp)) return fallback;
@@ -77,12 +75,10 @@ export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
 
 /**
  * Write JSON data to KV (on Vercel) and the local filesystem.
- * On Vercel this makes changes persist across serverless restarts.
  */
 export async function writeJSON<T>(filename: string, data: T): Promise<void> {
   const kvKey = `data:${filename.replace(".json", "")}`;
 
-  // Write to KV (persists on Vercel)
   const kv = await getKv();
   if (kv) {
     try {
@@ -92,29 +88,108 @@ export async function writeJSON<T>(filename: string, data: T): Promise<void> {
     }
   }
 
-  // Also write to filesystem (local dev + backup)
   ensureDir(DATA_DIR);
   fs.writeFileSync(filePath(filename), JSON.stringify(data, null, 2), "utf-8");
 }
 
-// ---------- Upload helpers (keep filesystem — not suitable for KV) ----------
+// ---------- Blob upload helpers (Vercel Blob + local fallback) ----------
 
-export function saveBase64Image(base64: string, filename: string): string {
+/**
+ * Upload a file to Vercel Blob (production) or local filesystem (dev).
+ * If `oldUrl` is provided and is a Blob URL, deletes the old file first.
+ * Returns the public URL of the uploaded file.
+ */
+export async function uploadFile(
+  file: File,
+  oldUrl?: string,
+): Promise<string> {
+  // Delete old file if replacing
+  if (oldUrl) {
+    await deleteFileByUrl(oldUrl);
+  }
+
+  // On Vercel with Blob token → use Vercel Blob
+  if (isVercel() && process.env.BLOB_READ_WRITE_TOKEN) {
+    const { put } = await import("@vercel/blob");
+    const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+    const blob = await put(filename, file, { access: "public" });
+    return blob.url;
+  }
+
+  // Local dev or no Blob token → filesystem
   ensureDir(UPLOADS_DIR);
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+  fs.writeFileSync(path.join(UPLOADS_DIR, filename), buffer);
+  return `/uploads/${filename}`;
+}
+
+/**
+ * Upload a base64-encoded image to Vercel Blob or filesystem.
+ */
+export async function saveBase64Image(
+  base64: string,
+  filename: string,
+): Promise<string> {
+  const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
   const data = base64.replace(/^data:image\/\w+;base64,/, "");
   const buffer = Buffer.from(data, "base64");
-  const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const fullPath = path.join(UPLOADS_DIR, safeName);
-  fs.writeFileSync(fullPath, buffer);
+
+  // On Vercel with Blob token → use Vercel Blob
+  if (isVercel() && process.env.BLOB_READ_WRITE_TOKEN) {
+    const { put } = await import("@vercel/blob");
+    const blobName = `${Date.now()}-${safeName}`;
+    // Convert Buffer to ReadableStream for Blob
+    const blob = await put(blobName, buffer, { access: "public" });
+    return blob.url;
+  }
+
+  // Local dev → filesystem
+  ensureDir(UPLOADS_DIR);
+  fs.writeFileSync(path.join(UPLOADS_DIR, safeName), buffer);
   return `/uploads/${safeName}`;
 }
 
-export function deleteFile(relativePath: string): void {
-  const fullPath = path.join(process.cwd(), "public", relativePath);
-  if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+/**
+ * Delete a file by URL — works for both Vercel Blob URLs and local paths.
+ */
+export async function deleteFileByUrl(url: string): Promise<void> {
+  // Vercel Blob URL
+  if (url.includes("blob.vercel-storage.com")) {
+    try {
+      const { del } = await import("@vercel/blob");
+      await del(url);
+    } catch {
+      // Blob deletion failed — ignore
+    }
+    return;
+  }
+
+  // Local filesystem path
+  if (url.startsWith("/uploads/")) {
+    const fullPath = path.join(process.cwd(), "public", url);
+    if (fs.existsSync(fullPath)) {
+      fs.unlinkSync(fullPath);
+    }
+  }
 }
 
-export function listUploads(): string[] {
+/**
+ * List all uploaded files — from Vercel Blob or local filesystem.
+ */
+export async function listUploads(): Promise<string[]> {
+  // Vercel Blob
+  if (isVercel() && process.env.BLOB_READ_WRITE_TOKEN) {
+    try {
+      const { list } = await import("@vercel/blob");
+      const { blobs } = await list();
+      return blobs.map((b) => b.url);
+    } catch {
+      return [];
+    }
+  }
+
+  // Local filesystem
   ensureDir(UPLOADS_DIR);
   return fs.readdirSync(UPLOADS_DIR).map((f) => `/uploads/${f}`);
 }
