@@ -11,23 +11,20 @@ import { useLanguage } from "@/lib/i18n";
 
 export default function PricingSection() {
   const { t } = useLanguage();
-  const [isYearly, setIsYearly] = useState(false);
   const [income, setIncome] = useState("");
 
   const recommendedPlan = useMemo(() => {
     const amt = parseInt(income.replace(/,/g, ""));
     if (isNaN(amt) || amt <= 0) return null;
-    // Find the best plan: highest tier the income qualifies for
-    let best: (typeof pricingPlans)[number] | null = null;
+    // Find the plan where income falls within its range
     for (const plan of pricingPlans) {
-      if (plan.incomeMin && amt >= plan.incomeMin) {
-        best = plan;
-      } else if (plan.incomeMax && amt <= plan.incomeMax) {
-        best = plan;
-        break;
+      const min = plan.incomeMin ?? 0;
+      const max = plan.incomeMax ?? Infinity;
+      if (amt >= min && amt <= max) {
+        return plan;
       }
     }
-    return best;
+    return null;
   }, [income]);
 
   const formatIncome = (val: string) => {
@@ -92,25 +89,7 @@ export default function PricingSection() {
           </div>
         </motion.div>
 
-        {/* Toggle */}
-        <div className="flex items-center justify-center gap-4 mb-12">
-          <span className={`text-sm font-medium ${!isYearly ? "text-slate-900" : "text-slate-400"}`}>{t.pricing.monthly}</span>
-          <button
-            onClick={() => setIsYearly(!isYearly)}
-            className={`relative w-14 h-7 rounded-full transition-colors ${isYearly ? "bg-gradient-to-r from-blue-600 to-indigo-600" : "bg-slate-300"}`}
-          >
-            <motion.div
-              animate={{ x: isYearly ? 28 : 2 }}
-              className="absolute top-1 w-5 h-5 bg-white rounded-full shadow"
-            />
-          </button>
-          <span className={`text-sm font-medium ${isYearly ? "text-slate-900" : "text-slate-400"}`}>
-            {t.pricing.yearly}
-            <span className="ml-1.5 px-2 py-0.5 rounded-full bg-gradient-to-r from-emerald-100 to-cyan-100 text-emerald-700 text-xs font-medium">{t.pricing.savePercent}</span>
-          </span>
-        </div>
-
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
           {pricingPlans.map((plan, index) => {
             const isRecommended = recommendedPlan?.name === plan.name;
             return (
@@ -147,10 +126,10 @@ export default function PricingSection() {
 
                   <div className="mb-6">
                     <span className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                      ₹{isYearly ? Math.round(plan.price * 10) : plan.price}
+                      ₹{plan.price}
                     </span>
                     <span className="text-sm text-slate-500 ml-1">
-                      /{isYearly ? "year" : "month"}
+                      /{plan.period}
                     </span>
                   </div>
 

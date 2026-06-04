@@ -1,34 +1,33 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   LayoutDashboard,
   FileText,
   Briefcase,
-  MessageSquare,
   HelpCircle,
   Image,
   BadgePercent,
   Calendar,
+  Settings,
+  Star,
+  FileEdit,
   LogOut,
   Menu,
-  X,
   ChevronRight,
 } from "lucide-react";
-
-interface AdminContextType {
-  logout: () => Promise<void>;
-}
-
-const AdminContext = createContext<AdminContextType>({ logout: async () => {} });
-export const useAdmin = () => useContext(AdminContext);
+import Logo from "@/components/ui/logo";
+import { AdminProvider } from "@/lib/admin/admin-context";
 
 const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/settings", label: "Site Settings", icon: Settings },
+  { href: "/admin/content", label: "Content Manager", icon: FileEdit },
   { href: "/admin/blogs", label: "Blog Posts", icon: FileText },
   { href: "/admin/services", label: "Services", icon: Briefcase },
+  { href: "/admin/testimonials", label: "Testimonials", icon: Star },
   { href: "/admin/tax-slabs", label: "Tax Slabs", icon: BadgePercent },
   { href: "/admin/due-dates", label: "Due Dates", icon: Calendar },
   { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
@@ -74,10 +73,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  if (!authenticated) return null;
-
-  return (
-    <AdminContext.Provider value={{ logout }}>
+  if (!authenticated) return null;    return (
+    <AdminProvider value={{ logout }}>
       <div className="min-h-screen bg-slate-50 flex">
         {/* Mobile overlay */}
         {sidebarOpen && (
@@ -97,13 +94,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Logo */}
             <div className="p-6 border-b border-slate-100">
               <Link href="/admin" className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">T</span>
-                </div>
-                <div>
-                  <span className="text-lg font-bold">TaxEase</span>
-                  <span className="block text-xs text-slate-400 font-medium">Admin Panel</span>
-                </div>
+                <Logo tagline="Admin Panel" showTagline dark />
               </Link>
             </div>
 
@@ -170,6 +161,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <main className="p-3 sm:p-4 lg:p-8">{children}</main>
         </div>
       </div>
-    </AdminContext.Provider>
+    </AdminProvider>
   );
 }

@@ -3,52 +3,37 @@
 import { motion } from "framer-motion";
 import SectionTitle from "@/components/ui/section-title";
 import { Card } from "@/components/ui/card";
-import { Shield, Target, Eye, Award, Users, CheckCircle, Quote, Sparkles } from "lucide-react";
+import { Shield, Target, Eye, Award, Quote, Sparkles, GraduationCap, Briefcase, BookOpen, User } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
-const values = [
-  {
-    icon: Shield,
-    title: "Trust & Integrity",
-    desc: "We believe in transparent dealings and maintaining the highest ethical standards in all our services.",
-    gradient: "from-blue-600 to-indigo-600",
-    shadow: "shadow-blue-200",
-  },
-  {
-    icon: Target,
-    title: "Accuracy First",
-    desc: "Every filing is double-checked to ensure 99%+ accuracy, protecting you from penalties and notices.",
-    gradient: "from-blue-500 to-indigo-500",
-    shadow: "shadow-blue-200",
-  },
-  {
-    icon: Eye,
-    title: "Client Focus",
-    desc: "Your financial well-being is our priority. We tailor solutions to your unique business needs.",
-    gradient: "from-sky-500 to-blue-600",
-    shadow: "shadow-sky-200",
-  },
-  {
-    icon: Award,
-    title: "Expert Team",
-    desc: "Our team of CAs, CS, and tax professionals brings decades of combined experience to serve you.",
-    gradient: "from-blue-600 to-indigo-600",
-    shadow: "shadow-blue-200",
-  },
+const valueIcons: React.ElementType[] = [Shield, Target, Eye, Award];
+const valueGradients = [
+  "from-blue-600 to-indigo-600",
+  "from-blue-500 to-indigo-500",
+  "from-sky-500 to-blue-600",
+  "from-blue-600 to-indigo-600",
+];
+const valueShadows = ["shadow-blue-200", "shadow-blue-200", "shadow-sky-200", "shadow-blue-200"];
+
+const statGradients = [
+  "from-blue-600 to-indigo-600",
+  "from-blue-500 to-indigo-500",
+  "from-sky-500 to-blue-600",
+  "from-blue-600 to-indigo-700",
+  "from-blue-500 to-indigo-600",
+  "from-indigo-500 to-blue-600",
+  "from-sky-500 to-indigo-500",
+  "from-blue-600 to-sky-600",
 ];
 
-const stats = [            { value: "10+", label: "Years of Excellence", gradient: "from-blue-600 to-indigo-600" },
-            { value: "5000+", label: "Clients Served", gradient: "from-blue-500 to-indigo-500" },
-            { value: "99%", label: "Client Satisfaction", gradient: "from-sky-500 to-blue-600" },
-            { value: "50+", label: "Expert Professionals", gradient: "from-blue-600 to-indigo-700" },
+const founderInfo = [
+  { icon: "GraduationCap", title: "Education", desc: "B.Com in Accounting & Finance from Dibrugarh University (2009–2012)" },
+  { icon: "Briefcase", title: "Latest Role", desc: "Accountant at Kaziranga University, handling financial operations, payroll, and taxation (2023–2025)" },
+  { icon: "Award", title: "Industry Experience", desc: "Manufacturing cost accounting at Electrokings India and multi-client tax consultancy at S.K Kalani & Co." },
+  { icon: "BookOpen", title: "Expertise", desc: "GST, Income Tax, TDS/TCS, PF/ESIC, Tally Prime, SAP, Odoo, and Advanced Excel" },
 ];
 
-const teamHighlights = [
-  { number: "25+", label: "Chartered Accountants" },
-  { number: "15+", label: "Company Secretaries" },
-  { number: "10+", label: "Tax Consultants" },
-  { number: "8+", label: "Legal Advisors" },
-];
+const founderIconMap: Record<string, React.ElementType> = { GraduationCap, Briefcase, Award, BookOpen };
 
 export default function AboutPage() {
   const { t } = useLanguage();
@@ -99,9 +84,9 @@ export default function AboutPage() {
             transition={{ delay: 0.3 }}
             className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-12"
           >
-            {stats.map((stat, i) => (
+            {(t.about?.team?.highlights || []).map((stat, i) => (
               <motion.div
-                key={stat.label}
+                key={i}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + i * 0.1 }}
@@ -109,8 +94,8 @@ export default function AboutPage() {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/[0.02] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative backdrop-blur-sm bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6 text-center hover:border-white/20 transition-all duration-300">
-                  <div className={`text-2xl sm:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${stat.gradient} mb-1`}>
-                    {stat.value}
+                  <div className={`text-2xl sm:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${statGradients[i % statGradients.length]} mb-1`}>
+                    {stat.number}
                   </div>
                   <div className="text-sm text-white/60">{stat.label}</div>
                 </div>
@@ -149,19 +134,21 @@ export default function AboutPage() {
             subtitle={t.about.values.subtitle}
           />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8">
-            {values.map((v, i) => {
-              const Icon = v.icon;
+            {(t.about?.values?.items || []).map((v, i) => {
+              const Icon = valueIcons[i % valueIcons.length];
+              const grad = valueGradients[i % valueGradients.length];
+              const shad = valueShadows[i % valueShadows.length];
               return (
                 <motion.div
-                  key={v.title}
+                  key={i}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                 >
                   <Card className="text-center h-full group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
-                    <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${v.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${v.gradient} flex items-center justify-center mx-auto mb-4 shadow-lg ${v.shadow} group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${grad} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${grad} flex items-center justify-center mx-auto mb-4 shadow-lg ${shad} group-hover:scale-110 transition-transform duration-300`}>
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                     <h3 className="text-lg font-semibold text-slate-900 mb-2">{v.title}</h3>
@@ -183,23 +170,65 @@ export default function AboutPage() {
             title={t.about.team.title}
             subtitle={t.about.team.subtitle}
           />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-8">
-            {teamHighlights.map((item, i) => (
-              <motion.div
-                key={item.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl p-6 text-center border border-gray-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-              >
-                <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-1">
-                  {item.number}
+          {/* Founder Profile Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto mt-8"
+          >
+            <Card className="relative overflow-hidden">
+              {/* Gradient accent top */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-400" />
+              <div className="p-6 sm:p-8">
+                <div className="flex flex-col sm:flex-row items-start gap-6">
+                  {/* Avatar */}
+                  <div className="shrink-0">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                      <User className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+                    </div>
+                  </div>
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Santosh Sharma</h3>
+                    <p className="text-sm sm:text-base text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 font-medium">
+                      Founder & Accountant — AccTax Solutions
+                    </p>
+                    <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+                      Results-oriented Accountant with 13+ years of experience across education, manufacturing, and consulting sectors. Specializes in financial reporting, taxation (GST & Income Tax), statutory compliance, audit coordination, and managing complex accounting operations. Proficient in Tally Prime, SAP, Odoo, and Advanced Excel.
+                    </p>
+                  </div>
                 </div>
-                <div className="text-sm text-slate-500">{item.label}</div>
-              </motion.div>
-            ))}
-          </div>
+
+                {/* Founder Details Grid */}
+                <div className="grid sm:grid-cols-2 gap-4 mt-6">
+                  {founderInfo.map((item, i) => {
+                    const Icon = founderIconMap[item.icon];
+                    return (
+                      <motion.div
+                        key={item.title}
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                        className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-blue-50/80 to-indigo-50/80 border border-blue-100/50"
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                          {Icon && <Icon className="w-5 h-5 text-white" />}
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-900">{item.title}</h4>
+                          <p className="text-xs sm:text-sm text-slate-600 mt-0.5 leading-relaxed">{item.desc}</p>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
+
         </div>
       </section>
     </div>

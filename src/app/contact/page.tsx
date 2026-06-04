@@ -9,31 +9,13 @@ import { useLanguage } from "@/lib/i18n";
 
 const offices = [
   {
-    city: "Mumbai (HQ)",
-    address: "Bandra Kurla Complex, Bandra East, Mumbai - 400051",
-    phone: "+91 99999 99999",
-    email: "mumbai@taxease.in",
+    city: "Jorhat (HQ)",
+    address: "Fancy Ali, Jorhat, Assam - 785001",
+    phone: "+91 9613461462",
+    email: "info@acctaxsolutions.in",
     gradient: "from-blue-600 to-indigo-600",
     iconBg: "bg-blue-100",
     iconColor: "text-blue-600",
-  },
-  {
-    city: "Delhi",
-    address: "Connaught Place, New Delhi - 110001",
-    phone: "+91 99999 99998",
-    email: "delhi@taxease.in",
-    gradient: "from-blue-500 to-indigo-500",
-    iconBg: "bg-indigo-100",
-    iconColor: "text-indigo-600",
-  },
-  {
-    city: "Bengaluru",
-    address: "MG Road, Bengaluru - 560001",
-    phone: "+91 99999 99997",
-    email: "blr@taxease.in",
-    gradient: "from-sky-500 to-blue-600",
-    iconBg: "bg-sky-100",
-    iconColor: "text-sky-600",
   },
 ];
 
@@ -82,7 +64,7 @@ export default function ContactPage() {
             title="Visit Us Across India"
             subtitle="We have offices in major cities to serve you better."
           />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-1 max-w-md mx-auto gap-4 sm:gap-6 mt-8">
             {offices.map((office, i) => (
               <motion.div
                 key={office.city}
@@ -125,7 +107,7 @@ export default function ContactPage() {
                   </div>
 
                   <a
-                    href={`https://maps.google.com/?q=${office.address}`}
+                    href={office.city === "Jorhat (HQ)" ? "https://maps.google.com/?q=26.759569,94.217385" : `https://maps.google.com/?q=${office.address}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 mt-5 text-xs font-medium text-slate-400 hover:text-blue-600 transition-colors group/map"

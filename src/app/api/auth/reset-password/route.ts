@@ -34,6 +34,9 @@ export async function POST() {
   const cookieStore = await cookies();
   const token = cookieStore.get("admin_token");
   const isAuthenticated = token?.value === "authenticated";
+  if (!isAuthenticated) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const config = readJSON("site-config.json", {
     adminUsername: "admin",

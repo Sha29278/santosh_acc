@@ -298,7 +298,6 @@ export interface Translations {
   language: {
     switchTo: string;
     english: string;
-    hindi: string;
   };
   common: {
     loading: string;

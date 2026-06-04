@@ -1,39 +1,48 @@
 import { NextResponse } from "next/server";
-import { readJSON } from "@/lib/admin/storage";
-
-interface DueDateItem {
-  id: string;
-  category: "gst" | "income-tax";
-  form: string;
-  title: string;
-  description: string;
-  period: string;
-  dueDate: string;
-  type: string;
-  url: string;
-}
+import { generateDueDates } from "@/lib/generate-due-dates";
+import { readJSON, writeJSON } from "@/lib/admin/storage";
+import type { DueDateOverride } from "@/lib/generate-due-dates";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 3600;
+export const revalidate = 0;
 
 /**
- * Sync due dates from government portals.
+ * Sync due dates by:
+ * 1. Programmatically generating all due dates from tax rules
+ * 2. Applying any admin overrides on top (for government deadline extensions)
  *
- * Currently returns existing data. In a future enhancement, this would:
- * 1. Scrape https://www.gst.gov.in/ for latest GST due dates
- * 2. Scrape https://eportal.incometax.gov.in/ for Income Tax calendar
- * 3. Auto-update the due-dates.json file with fresh data
+ * Runs daily at 12 AM via Vercel Cron and via the manual sync button.
  */
 export async function GET() {
   try {
-    const data = readJSON<DueDateItem[]>("due-dates.json", []);
+    let items = generateDueDates();
+
+    // Apply admin overrides (e.g., when government extends a deadline)
+    const overrides = readJSON<DueDateOverride[]>("due-date-overrides.json", []);
+    const activeOverrides = overrides.filter((o) => o.active);
+
+    if (activeOverrides.length > 0) {
+      items = items.map((item) => {
+        const ov = activeOverrides.find((o) => o.id === item.id);
+        if (ov) {
+          return {
+            ...item,
+            dueDate: ov.dueDate,
+            description: `${item.description} (${ov.reason})`,
+          };
+        }
+        return item;
+      });
+    }
+
+    // Persist to due-dates.json so the rest of the app can read it
+    writeJSON("due-dates.json", items);
 
     return NextResponse.json({
       success: true,
-      message: data.length > 0
-        ? "Due dates synced successfully"
-        : "No due dates found. Add them from the admin panel.",
-      count: data.length,
+      message: `Synced ${items.length} due dates (${activeOverrides.length} overrides applied) for FY ${getFinancialYear()}`,
+      count: items.length,
+      overridesApplied: activeOverrides.length,
       syncedAt: new Date().toISOString(),
     });
   } catch (error) {
@@ -46,4 +55,12 @@ export async function GET() {
       { status: 500 }
     );
   }
+}
+
+function getFinancialYear(): string {
+  const now = new Date();
+  const y = now.getUTCFullYear();
+  const m = now.getUTCMonth() + 1;
+  const start = m >= 4 ? y : y - 1;
+  return `${start}-${start + 1}`;
 }

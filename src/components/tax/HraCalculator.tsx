@@ -9,7 +9,7 @@ import {
   MapPin,
   Calculator,
   Info,
-  DollarSign,
+  IndianRupee,
   TrendingUp,
   PiggyBank,
 } from "lucide-react";
@@ -104,7 +104,7 @@ export default function HraCalculator() {
                 Basic Salary + DA (Monthly ₹)
               </label>
               <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="number"
                   value={basicDa}

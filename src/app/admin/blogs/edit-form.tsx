@@ -36,7 +36,6 @@ export default function BlogEditor({ postId }: { postId?: number }) {
 
   useEffect(() => {
     if (postId) {
-      setLoading(true);
       fetch(`/api/blogs/${postId}`)
         .then((r) => r.json())
         .then((data) => {

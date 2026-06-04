@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       siteName: "TaxEase",
       siteDescription: "Your Trusted GST & Taxation Partner",
       contactEmail: "info@taxease.com",
-      contactPhone: "+91 99999 99999",
+      contactPhone: "+91 9613461462",
       address: "123, Business Hub, Andheri East, Mumbai - 400093",
     });
 

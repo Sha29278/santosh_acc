@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TaxEase — GST Filing & Taxation Services in India",
+  title: "AccTax Solutions — GST Filing & Taxation Services in India",
   description: "Professional GST filing, income tax return, TDS, and business compliance services in India. Trusted by 5000+ businesses. File your taxes with ease.",
   keywords: "GST filing, income tax, TDS, tax consultancy, business registration, India tax services",
 };

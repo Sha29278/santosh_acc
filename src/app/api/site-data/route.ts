@@ -3,13 +3,13 @@ import fs from "fs";
 import path from "path";
 
 interface SiteData {
-  services: any[];
-  testimonials: any[];
-  faqs: any[];
-  blogPosts: any[];
-  whyChooseUs: any[];
-  pricingPlans: any[];
-  processSteps: any[];
+  services: Record<string, unknown>[];
+  testimonials: Record<string, unknown>[];
+  faqs: Record<string, unknown>[];
+  blogPosts: Record<string, unknown>[];
+  whyChooseUs: Record<string, unknown>[];
+  pricingPlans: Record<string, unknown>[];
+  processSteps: Record<string, unknown>[];
 }
 
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const dataDir = path.join(process.cwd(), "data");
 
-  const readFile = (filename: string, fallback: any[]) => {
+  const readFile = (filename: string, fallback: Record<string, unknown>[]) => {
     const fp = path.join(dataDir, filename);
     if (!fs.existsSync(fp)) return fallback;
     return JSON.parse(fs.readFileSync(fp, "utf-8"));

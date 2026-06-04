@@ -25,14 +25,23 @@ export async function POST(request: Request) {
     if (file) {
       // Handle file upload
       const buffer = Buffer.from(await file.arrayBuffer());
-      const ext = file.name.split(".").pop() || "png";
       const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
       const { writeFileSync, existsSync, mkdirSync } = await import("fs");
       const path = await import("path");
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
+      // On Vercel, public/ is read-only — write to /tmp/uploads/ instead
+      // Served via a separate /api/uploads/[file] route or accessed directly
+      const isVercel = !!process.env.VERCEL;
+      const uploadsDir = isVercel
+        ? path.join("/tmp", "uploads")
+        : path.join(process.cwd(), "public", "uploads");
+
       if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true });
       writeFileSync(path.join(uploadsDir, filename), buffer);
-      return NextResponse.json({ url: `/uploads/${filename}` }, { status: 201 });
+
+      // Return a URL the frontend can use
+      const url = isVercel ? `/api/uploads/${filename}` : `/uploads/${filename}`;
+      return NextResponse.json({ url }, { status: 201 });
     }
 
     // Handle base64 upload

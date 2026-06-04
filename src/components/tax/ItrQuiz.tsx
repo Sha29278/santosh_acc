@@ -10,7 +10,7 @@ import {
   FileText,
   Briefcase,
   Building2,
-  DollarSign,
+  IndianRupee,
   Landmark,
   Sparkles,
 } from "lucide-react";
@@ -51,7 +51,7 @@ const QUESTIONS = [
     id: "sources",
     question: "What are your income sources?",
     subtitle: "Select all that apply",
-    icon: <DollarSign className="w-6 h-6" />,
+    icon: <IndianRupee className="w-6 h-6" />,
     multiSelect: true as const,
     options: [
       { value: "salary" as const, label: "Salary / Pension", desc: "Employment income", emoji: "💼" },
@@ -65,8 +65,8 @@ const QUESTIONS = [
   },
   {
     id: "income",
-    question: "What is your total annual income?",
-    subtitle: "This helps determine if ITR-1 (Sahaj) is applicable",
+    question: "What is your total monthly turnover?",
+    subtitle: "This helps determine which ITR form applies to you",
     icon: <Landmark className="w-6 h-6" />,
     options: [
       { value: "below25", label: "Up to ₹25 Lakhs", desc: "Eligible for ITR-1 (Sahaj) if salaried", emoji: "💰" },

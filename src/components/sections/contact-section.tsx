@@ -73,7 +73,7 @@ export default function ContactSection() {
                       type="tel"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all"
-                      placeholder="+91 99999 99999"
+                      placeholder="+91 9613461462"
                     />
                   </div>
                   <div>
@@ -119,8 +119,8 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-1">{t.contact.callUs}</h3>
-                  <a href="tel:+919999999999" className="text-blue-600 hover:underline font-medium">
-                    +91 99999 99999
+                  <a href="tel:+919613461462" className="text-blue-600 hover:underline font-medium">
+                    +91 9613461462
                   </a>
                   <p className="text-sm text-slate-500 mt-1">{t.contact.workingHours}</p>
                 </div>
@@ -134,8 +134,8 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-1">{t.contact.emailUs}</h3>
-                  <a href="mailto:info@taxease.in" className="text-indigo-600 hover:underline font-medium">
-                    info@taxease.in
+                  <a href="mailto:info@acctaxsolutions.in" className="text-indigo-600 hover:underline font-medium">
+                    info@acctaxsolutions.in
                   </a>
                   <p className="text-sm text-slate-500 mt-1">{t.contact.replyTime}</p>
                 </div>
@@ -149,7 +149,7 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-1">{t.contact.visitUs}</h3>
-                  <p className="text-slate-600">Mumbai, Maharashtra, India</p>
+                  <p className="text-slate-600">Fancy Ali, Jorhat (Assam) — 785001</p>
                   <p className="text-sm text-slate-500 mt-1">{t.contact.byAppointment}</p>
                 </div>
               </div>
@@ -158,13 +158,13 @@ export default function ContactSection() {
             {/* Mini Map */}
             <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-md h-48 group">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15078.0!2d72.8777!3d19.0760!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644e1b1%3A0x5da4ed8f8d648c3e!2sMumbai%2C+Maharashtra!5e0!3m2!1sen!2sin!4v1"
+                src="https://www.google.com/maps?q=26.759569,94.217385&output=embed&z=15"
                 width="100%"
                 height="100%"
                 style={{ border: 0, filter: "grayscale(0.15)" }}
                 allowFullScreen
                 loading="lazy"
-                title="TaxEase Location"
+                title="AccTax Solutions Location"
                 className="w-full h-full transition-all duration-700 hover:filter-none"
                 onMouseEnter={(e) => e.currentTarget.style.filter = 'none'}
                 onMouseLeave={(e) => e.currentTarget.style.filter = 'grayscale(0.15)'}
@@ -181,7 +181,7 @@ export default function ContactSection() {
                 </div>
               </div>
               <a
-                href="https://wa.me/919999999999"
+                href="https://wa.me/919613461462"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 inline-flex items-center gap-2 px-6 py-3 bg-white text-emerald-700 rounded-xl font-medium text-sm hover:bg-emerald-50 transition-colors shadow-lg"

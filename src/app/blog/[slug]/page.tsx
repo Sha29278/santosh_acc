@@ -58,8 +58,8 @@ export default function BlogDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
   const blogPosts = useBlogPosts();
-  const post = blogPosts.find((p: any) => p.slug === slug);
-  const relatedPosts = blogPosts.filter((p: any) => p.slug !== slug).slice(0, 3);
+  const post = blogPosts.find((p) => p.slug === slug);
+  const relatedPosts = blogPosts.filter((p) => p.slug !== slug).slice(0, 3);
 
   if (!post) {
     return (
@@ -204,7 +204,7 @@ export default function BlogDetailPage() {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {relatedPosts.map((related: any, i: number) => (
+              {relatedPosts.map((related, i) => (
                 <motion.div
                   key={related.id || i}
                   initial={{ opacity: 0, y: 20 }}

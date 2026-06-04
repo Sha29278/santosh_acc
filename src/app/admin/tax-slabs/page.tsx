@@ -373,7 +373,7 @@ function RegimeEditor({
 
           {data.slabs.length === 0 && (
             <div className="text-center py-6 text-slate-400 text-xs">
-              No slabs defined. Click "Add Slab" to add one.
+              No slabs defined. Click &quot;Add Slab&quot; to add one.
             </div>
           )}
         </div>

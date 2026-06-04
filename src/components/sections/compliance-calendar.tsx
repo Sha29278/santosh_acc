@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionTitle from "@/components/ui/section-title";
 import { Card } from "@/components/ui/card";
@@ -44,7 +44,6 @@ function LiveCountdown({ targetDate }: { targetDate: string }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const update = () => {
       const now = new Date().getTime();
       const target = new Date(targetDate).getTime();
@@ -57,6 +56,7 @@ function LiveCountdown({ targetDate }: { targetDate: string }) {
       });
     };
     update();
+    setMounted(true);
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
   }, [targetDate]);
@@ -138,6 +138,8 @@ function getUrgencyColor(daysLeft: number): string {
   return "border-l-green-500";
 }
 
+// ─── Main Component ──────────────────────────────────────────────────────
+
 export default function ComplianceCalendar() {
   const { t } = useLanguage();
   const [dueDates, setDueDates] = useState<DueDateItem[]>([]);
@@ -145,11 +147,7 @@ export default function ComplianceCalendar() {
   const [filter, setFilter] = useState<FilterType>("all");
   const [syncing, setSyncing] = useState(false);
   const [lastSynced, setLastSynced] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadDueDates();
-    setLastSynced(localStorage.getItem("due-dates-last-synced"));
-  }, []);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
 
   const loadDueDates = () => {
     fetch("/api/data/due-dates")
@@ -163,15 +161,87 @@ export default function ComplianceCalendar() {
       .finally(() => setLoading(false));
   };
 
+  useEffect(() => {
+    loadDueDates();
+
+    // Show last synced time from localStorage
+    const stored = localStorage.getItem("due-dates-last-synced");
+    if (stored) setLastSynced(stored);
+
+    // ─── Auto-sync if stale (>24 hours since last sync) ────────────
+    // This runs every time someone visits the site, so dates stay fresh
+    // without needing a Vercel Pro plan for cron jobs.
+    const lastSyncTs = localStorage.getItem("due-dates-last-synced-ts");
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+    if (!lastSyncTs || Date.now() - parseInt(lastSyncTs) > twentyFourHours) {
+      // Silently sync in the background
+      fetch("/api/sync-due-dates")
+        .then((r) => r.json())
+        .then((result) => {
+          if (result.success) {
+            return fetch("/api/data/due-dates");
+          }
+        })
+        .then((r) => (r ? r.json() : null))
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setDueDates(data);
+            const now = new Date().toLocaleString("en-IN");
+            localStorage.setItem("due-dates-last-synced", now);
+            localStorage.setItem("due-dates-last-synced-ts", String(Date.now()));
+            setLastSynced(now);
+          }
+        })
+        .catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ─── Hero Calendar Click Handler ──────────────────────────────────────
+  // Use a ref to always have access to the latest dueDates in the event handler
+  const dueDatesRef = useRef(dueDates);
+  useEffect(() => {
+    dueDatesRef.current = dueDates;
+  });
+
+  useEffect(() => {
+    const handleHeroDateClick = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (!detail) return;
+      const { month, day } = detail;
+      const current = dueDatesRef.current;
+      if (current.length === 0) return;
+
+      // Find a due date item matching this month/day
+      const match = current.find((d) => {
+        const dd = new Date(d.dueDate);
+        return dd.getMonth() === month && dd.getDate() === day;
+      });
+      if (match) {
+        setHighlightedId(match.id);
+        setTimeout(() => {
+          const el = document.getElementById(`due-date-${match.id}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 400);
+        setTimeout(() => setHighlightedId(null), 4000);
+      }
+    };
+
+    window.addEventListener("hero-date-clicked", handleHeroDateClick);
+    return () => window.removeEventListener("hero-date-clicked", handleHeroDateClick);
+  }, []);
+
   const handleSync = async () => {
     setSyncing(true);
     try {
-      // Attempt to fetch fresh data from our API (which could later proxy from gov sites)
       const res = await fetch("/api/sync-due-dates");
       if (res.ok) {
         await loadDueDates();
         const now = new Date().toLocaleString("en-IN");
         localStorage.setItem("due-dates-last-synced", now);
+        localStorage.setItem("due-dates-last-synced-ts", String(Date.now()));
         setLastSynced(now);
       }
     } catch {
@@ -269,7 +339,7 @@ export default function ComplianceCalendar() {
 
   if (loading) {
     return (
-      <section className="relative py-20 lg:py-28 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden">
+      <section id="compliance-calendar" className="relative py-20 lg:py-28 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
         </div>
@@ -278,7 +348,7 @@ export default function ComplianceCalendar() {
   }
 
   return (
-    <section className="relative py-20 lg:py-28 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden">
+    <section id="compliance-calendar" className="relative py-20 lg:py-28 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden">
       {/* Background orbs */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -306,6 +376,10 @@ export default function ComplianceCalendar() {
             className="mb-0"
           />
           <div className="flex items-center gap-3 shrink-0">
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-50 border border-green-100 text-[10px] text-green-700 font-medium">
+              <RefreshCw className="w-3 h-3" />
+              Auto-syncs on every visit
+            </div>
             {lastSynced && (
               <span className="text-[10px] text-slate-400 hidden sm:block">
                 {t.complianceCalendar.lastSynced} {lastSynced}
@@ -327,7 +401,8 @@ export default function ComplianceCalendar() {
           <div className="bg-white rounded-xl p-3 border border-slate-200 text-center hover:shadow-md transition-shadow">                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">{t.complianceCalendar.total}</p>
             <p className="text-xl font-bold text-slate-800">{dueDates.length}</p>
           </div>
-          <div className="bg-white rounded-xl p-3 border border-red-100 text-center hover:shadow-md transition-shadow">                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">{t.complianceCalendar.overdue}</p>
+          <div className="bg-white rounded-xl p-3 border border-red-100 text-center hover:shadow-md transition-shadow">
+                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">{t.complianceCalendar.overdue}</p>
             <p className={`text-xl font-bold ${overdueCount > 0 ? "text-red-600" : "text-green-600"}`}>
               {overdueCount}
             </p>
@@ -408,11 +483,16 @@ export default function ComplianceCalendar() {
                     return (
                       <motion.div
                         key={item.id}
+                        id={`due-date-${item.id}`}
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: idx * 0.05 }}
-                        className={`block p-3 rounded-xl border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all border-l-4 ${getUrgencyColor(daysLeft)} cursor-pointer`}
+                        className={`block p-3 rounded-xl border border-l-4 ${getUrgencyColor(daysLeft)} cursor-pointer transition-all ${
+                          highlightedId === item.id
+                            ? "border-blue-400 bg-blue-50 shadow-lg shadow-blue-200/50 ring-2 ring-blue-400 scale-[1.02] border-slate-100"
+                            : "border-slate-100 hover:border-blue-200 hover:shadow-md"
+                        }`}
                         onClick={() => setSelectedEvent(item)}
                       >
                         <div className="flex items-start justify-between gap-3">
@@ -424,7 +504,6 @@ export default function ComplianceCalendar() {
                             </div>
                             <p className="text-sm font-medium text-slate-900 truncate">{item.title}</p>
                             <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{item.description}</p>
-                            {/* Live countdown for urgent items */}
                             {daysLeft <= 7 && daysLeft >= 0 && (
                               <div className="mt-2">
                                 <LiveCountdown targetDate={item.dueDate} />
@@ -503,11 +582,16 @@ export default function ComplianceCalendar() {
                     return (
                       <motion.div
                         key={item.id}
+                        id={`due-date-${item.id}`}
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: idx * 0.05 }}
-                        className={`block p-3 rounded-xl border border-slate-100 hover:border-indigo-200 hover:shadow-md transition-all border-l-4 ${getUrgencyColor(daysLeft)} cursor-pointer`}
+                        className={`block p-3 rounded-xl border border-l-4 ${getUrgencyColor(daysLeft)} cursor-pointer transition-all ${
+                          highlightedId === item.id
+                            ? "border-indigo-400 bg-indigo-50 shadow-lg shadow-indigo-200/50 ring-2 ring-indigo-400 scale-[1.02] border-slate-100"
+                            : "border-slate-100 hover:border-indigo-200 hover:shadow-md"
+                        }`}
                         onClick={() => setSelectedEvent(item)}
                       >
                         <div className="flex items-start justify-between gap-3">
@@ -577,12 +661,17 @@ export default function ComplianceCalendar() {
               return (
                 <motion.div
                   key={item.id}
+                  id={`due-date-${item.id}`}
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.03 }}
                   onClick={() => setSelectedEvent(item)}
-                  className={`block bg-white rounded-xl p-4 border border-slate-100 hover:shadow-md transition-all border-l-4 ${getUrgencyColor(daysLeft)} cursor-pointer`}
+                  className={`block bg-white rounded-xl p-4 border border-l-4 ${getUrgencyColor(daysLeft)} cursor-pointer transition-all ${
+                    highlightedId === item.id
+                      ? "border-blue-400 bg-blue-50 shadow-lg shadow-blue-200/50 ring-2 ring-blue-400"
+                      : "border-slate-100 hover:shadow-md"
+                  }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 min-w-0 flex-1">

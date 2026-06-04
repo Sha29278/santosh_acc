@@ -1,0 +1,29 @@
+{
+  "hero": {
+    "title": "Your Trusted",
+    "titleHighlight": "Tax & GST",
+    "description": "Expert guidance on GST registration, filing, and compliance.",
+    "cta": "Get Free Consultation"
+  },
+  "nav": {
+    "home": "Home"
+  },
+  "footer": {
+    "tagline": "Your Trusted Tax Partner",
+    "copyright": "� 2025 AccTax Solutions"
+  },
+  "about": {
+    "badge": "About Us",
+    "title": "Leading Tax Consultancy",
+    "description": "Expert services"
+  },
+  "common": {
+    "loading": "Loading..."
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy"
+  },
+  "terms": {
+    "title": "Terms"
+  }
+}

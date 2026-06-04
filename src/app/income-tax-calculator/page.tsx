@@ -9,7 +9,6 @@ import {
   Calculator,
   ArrowRightLeft,
   RefreshCw,
-  DollarSign,
   Sparkles,
   IndianRupee,
   Shield,
@@ -278,10 +277,10 @@ function IncomeTaxSection() {
                 Income Details
               </h3>
 
-              {/* Annual Income */}
+              {/* Monthly Turnover */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Annual Gross Income (₹)
+                  Monthly Turnover (₹)
                 </label>
                 <div className="relative">
                   <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -289,7 +288,7 @@ function IncomeTaxSection() {
                     type="number"
                     value={income}
                     onChange={(e) => setIncome(e.target.value)}
-                    placeholder="Enter your annual income"
+                    placeholder="Enter your monthly turnover"
                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-violet-500 focus:ring-2 focus:ring-violet-200 outline-none transition-all text-lg font-medium"
                   />
                 </div>
@@ -354,7 +353,7 @@ function IncomeTaxSection() {
                           </span>
                         </div>
                         <div className="relative">
-                          <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                          <IndianRupee className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                           <input
                             type="number"
                             value={deductions[key] || ""}
@@ -436,7 +435,7 @@ function IncomeTaxSection() {
 
                   {/* Breakdown */}
                   <div className="space-y-3">
-                    <ResultRow label="Gross Annual Income" value={result.grossIncome} color="text-slate-900" />
+                    <ResultRow label="Monthly Turnover" value={result.grossIncome} color="text-slate-900" />
                     <div className="h-px bg-gray-100" />
                     <ResultRow label={`Standard Deduction (₹${result.standardDeduction.toLocaleString("en-IN")})`} value={result.standardDeduction} color="text-emerald-600" prefix="−" />
                     {result.regime === "old" && result.totalDeductions > result.standardDeduction && (
@@ -575,7 +574,7 @@ function ChartsSection() {
         <div className="bg-white rounded-xl p-4 sm:p-6 border border-slate-200 mb-8">
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Annual Income (₹)</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Monthly Turnover (₹)</label>
               <input
                 type="number"
                 value={income}
@@ -715,7 +714,7 @@ function TaxSavingSection() {
         <div className="bg-white rounded-xl p-4 sm:p-6 border border-slate-200 mb-6">
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Annual Income (₹)</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Monthly Turnover (₹)</label>
               <input
                 type="number"
                 value={income}

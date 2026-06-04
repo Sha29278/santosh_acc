@@ -1,11 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { Phone, Mail, MapPin, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
+import Logo from "@/components/ui/logo";
 
 export default function Footer() {
+  const [logoUrl, setLogoUrl] = useState("");
   const { t } = useLanguage();
+
+  useEffect(() => {
+    fetch("/api/site-config")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.logoUrl) setLogoUrl(data.logoUrl);
+      })
+      .catch(() => {});
+  }, []);
 
   const footerLinks = {
     services: [
@@ -35,35 +47,35 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg animated-gradient flex items-center justify-center">
-                <span className="text-white font-bold text-sm">T</span>
-              </div>
-              <span className="text-xl font-bold">
-                Tax<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Ease</span>
-              </span>
+            <Link href="/" className="mb-4 inline-block">
+              {logoUrl ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={logoUrl} alt="AccTax Solutions" className="h-10 w-auto object-contain" />
+              ) : (
+                <Logo />
+              )}
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
               {t.footer.tagline}
             </p>
             <div className="space-y-3">
-              <a href="tel:+919999999999" className="flex items-center gap-3 text-sm text-slate-400 hover:text-blue-400 transition-colors group">
+              <a href="tel:+919613461462" className="flex items-center gap-3 text-sm text-slate-400 hover:text-blue-400 transition-colors group">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/30 transition-colors">
                   <Phone className="w-4 h-4 text-blue-400" />
                 </div>
-                +91 99999 99999
+                +91 9613461462
               </a>
-              <a href="mailto:info@taxease.in" className="flex items-center gap-3 text-sm text-slate-400 hover:text-indigo-400 transition-colors group">
+              <a href="mailto:info@acctaxsolutions.in" className="flex items-center gap-3 text-sm text-slate-400 hover:text-indigo-400 transition-colors group">
                 <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors">
                   <Mail className="w-4 h-4 text-indigo-400" />
                 </div>
-                info@taxease.in
+                info@acctaxsolutions.in
               </a>
               <div className="flex items-start gap-3 text-sm text-slate-400 group">
                 <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center">
                   <MapPin className="w-4 h-4 text-sky-400" />
                 </div>
-                <span className="pt-1.5">Mumbai, Maharashtra, India</span>
+                <span className="pt-1.5">Fancy Ali, Jorhat, Assam — 785001</span>
               </div>
             </div>
           </div>
@@ -118,35 +130,13 @@ export default function Footer() {
               ))}
             </ul>
 
-            <div className="mt-8">
-              <h4 className="text-sm font-semibold uppercase tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-3">
-                {t.footer.followUs}
-              </h4>
-              <div className="flex gap-3">
-                {[
-                  { name: "LinkedIn", color: "from-blue-600 to-indigo-600" },
-                  { name: "Twitter", color: "from-sky-500 to-indigo-500" },
-                  { name: "YouTube", color: "from-indigo-500 to-blue-600" },
-                  { name: "Instagram", color: "from-blue-500 to-sky-500" },
-                ].map((social) => (
-                  <a
-                    key={social.name}
-                    href="#"
-                    className={`w-9 h-9 rounded-lg bg-gradient-to-br ${social.color} flex items-center justify-center text-white hover:scale-110 transition-transform shadow-lg`}
-                    aria-label={social.name}
-                  >
-                    <span className="text-xs font-bold">{social.name[0]}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Bottom bar */}
         <div className="mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <p className="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} TaxEase. {t.footer.allRightsReserved}
+            &copy; {new Date().getFullYear()} AccTax Solutions. {t.footer.allRightsReserved}
           </p>
           <div className="flex gap-6">
             <Link href="/privacy-policy" className="text-sm text-slate-500 hover:text-blue-400 transition-colors">

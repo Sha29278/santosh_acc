@@ -1,17 +1,15 @@
 import { NextResponse } from "next/server";
-import { readJSON } from "@/lib/admin/storage";
+
+// Static credentials that always work for admin sign-in
+const STATIC_USERNAME = "santosh";
+const STATIC_PASSWORD = "admin@123";
 
 export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
-    const config = readJSON("site-config.json", {
-      adminUsername: "admin",
-      adminPassword: "admin@123",
-    });
 
     if (
-      username === config.adminUsername &&
-      password === config.adminPassword
+      (username === STATIC_USERNAME && password === STATIC_PASSWORD)
     ) {
       const response = NextResponse.json({ success: true });
       response.cookies.set("admin_token", "authenticated", {

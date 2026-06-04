@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Lock, RefreshCw, Copy, Check, ArrowLeft, KeyRound, ShieldAlert } from "lucide-react";
+import { RefreshCw, Copy, Check, ArrowLeft, KeyRound, ShieldAlert } from "lucide-react";
 
 export default function ResetPasswordPage() {
   const [step, setStep] = useState<"confirm" | "done">("confirm");

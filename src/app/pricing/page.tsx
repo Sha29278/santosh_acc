@@ -7,20 +7,21 @@ import { Check, X, Sparkles, ArrowRight, Star, Shield, Headphones } from "lucide
 import { useLanguage } from "@/lib/i18n";
 
 const comparisonData = [
-  { feature: "GST Registration Assistance", starter: true, pro: true, enterprise: true },
-  { feature: "GSTR-3B Filing (Monthly)", starter: true, pro: true, enterprise: true },
-  { feature: "GSTR-1 Filing", starter: false, pro: true, enterprise: true },
-  { feature: "Income Tax Return Filing", starter: false, pro: true, enterprise: true },
-  { feature: "TDS Return Filing", starter: false, pro: true, enterprise: true },
-  { feature: "Accounting Support", starter: false, pro: true, enterprise: true },
-  { feature: "ROC Compliance", starter: false, pro: false, enterprise: true },
-  { feature: "Payroll Processing", starter: false, pro: false, enterprise: true },
-  { feature: "Audit Support", starter: false, pro: false, enterprise: true },
-  { feature: "Dedicated Account Manager", starter: false, pro: false, enterprise: true },
-  { feature: "Email Support", starter: true, pro: true, enterprise: true },
-  { feature: "Phone Support", starter: false, pro: true, enterprise: true },
-  { feature: "24/7 Priority Support", starter: false, pro: false, enterprise: true },
-  { feature: "Monthly Reports", starter: false, pro: false, enterprise: true },
+  { feature: "GST Registration Assistance", starter: true, basic: true, pro: true, enterprise: true },
+  { feature: "GSTR-3B Filing (Monthly)", starter: true, basic: true, pro: true, enterprise: true },
+  { feature: "GSTR-1 Filing", starter: false, basic: true, pro: true, enterprise: true },
+  { feature: "Income Tax Return Filing", starter: false, basic: true, pro: true, enterprise: true },
+  { feature: "TDS Return Filing", starter: false, basic: true, pro: true, enterprise: true },
+  { feature: "Accounting Support", starter: false, basic: true, pro: true, enterprise: true },
+  { feature: "ROC Compliance", starter: false, basic: false, pro: true, enterprise: true },
+  { feature: "Payroll Processing", starter: false, basic: false, pro: true, enterprise: true },
+  { feature: "Audit Support", starter: false, basic: false, pro: false, enterprise: true },
+  { feature: "Dedicated Account Manager", starter: false, basic: false, pro: true, enterprise: true },
+  { feature: "Email Support", starter: true, basic: true, pro: true, enterprise: true },
+  { feature: "Phone Support", starter: false, basic: true, pro: true, enterprise: true },
+  { feature: "24/7 Priority Support", starter: false, basic: false, pro: true, enterprise: true },
+  { feature: "Dedicated CA Support", starter: false, basic: false, pro: false, enterprise: true },
+  { feature: "Monthly Reports", starter: false, basic: false, pro: true, enterprise: true },
 ];
 
 const features = [
@@ -59,9 +60,10 @@ export default function PricingPage() {
                 <thead>
                   <tr className="border-b border-blue-100 bg-gradient-to-r from-blue-50/80 via-white to-indigo-50/80">
                     <th className="text-left py-5 px-4 sm:px-6 font-semibold text-slate-900 text-sm">Feature</th>
-                    <th className="text-center py-5 px-2 sm:px-4 font-semibold text-sm text-slate-500">Starter</th>
-                    <th className="text-center py-5 px-2 sm:px-4 font-semibold text-sm bg-gradient-to-b from-blue-100/80 to-indigo-100/80 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Professional</th>
-                    <th className="text-center py-5 px-2 sm:px-4 font-semibold text-sm text-slate-500">Enterprise</th>
+                    <th className="text-center py-5 px-2 sm:px-4 font-semibold text-sm text-slate-500">Starter<br/><span className="text-[10px] font-normal">₹999/mo</span></th>
+                    <th className="text-center py-5 px-2 sm:px-4 font-semibold text-sm text-slate-600">Basic<br/><span className="text-[10px] font-normal">₹2,499/mo</span></th>
+                    <th className="text-center py-5 px-2 sm:px-4 font-semibold text-sm bg-gradient-to-b from-blue-100/80 to-indigo-100/80 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Professional<br/><span className="text-[10px] font-normal">₹4,999/mo</span></th>
+                    <th className="text-center py-5 px-2 sm:px-4 font-semibold text-sm text-slate-500">Enterprise<br/><span className="text-[10px] font-normal">₹6,999/mo</span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -70,6 +72,9 @@ export default function PricingPage() {
                       <td className="py-3.5 px-4 sm:px-6 text-sm text-slate-700">{row.feature}</td>
                       <td className="text-center py-3.5 px-2 sm:px-4">
                         {row.starter ? <Check className="w-5 h-5 text-emerald-500 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />}
+                      </td>
+                      <td className="text-center py-3.5 px-2 sm:px-4">
+                        {row.basic ? <Check className="w-5 h-5 text-emerald-500 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />}
                       </td>
                       <td className="text-center py-3.5 px-4 bg-gradient-to-b from-blue-50/50 to-indigo-50/50">
                         {row.pro ? <Check className="w-5 h-5 text-emerald-500 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />}

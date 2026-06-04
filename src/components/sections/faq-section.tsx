@@ -4,19 +4,12 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionTitle from "@/components/ui/section-title";
 import { faqs } from "@/data/site-data";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
 export default function FAQSection() {
   const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const filteredFaqs = faqs.filter(
-    (faq) =>
-      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <section className="py-20 lg:py-28 bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -27,21 +20,9 @@ export default function FAQSection() {
           subtitle={t.faq.subtitle}
         />
 
-        {/* Search */}
-        <div className="relative mb-8">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-          <input
-            type="text"
-            placeholder={t.faq.searchPlaceholder}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white/80"
-          />
-        </div>
-
         {/* FAQ List */}
         <div className="space-y-3">
-          {filteredFaqs.map((faq, index) => (
+          {faqs.map((faq, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 10 }}
@@ -92,12 +73,6 @@ export default function FAQSection() {
             </motion.div>
           ))}
         </div>
-
-        {filteredFaqs.length === 0 && (
-          <div className="text-center py-12 text-slate-500">
-            {t.faq.noResults}
-          </div>
-        )}
       </div>
     </section>
   );

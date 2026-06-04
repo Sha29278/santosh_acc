@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     excerpt: body.excerpt || "",
     content: body.content || "",
     category: body.category || "General",
-    author: body.author || "TaxEase Team",
+    author: body.author || "AccTax Solutions Team",
     date: new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
     readTime: body.readTime || `${Math.ceil((body.content?.length || 0) / 1000)} min read`,
     image: body.image || "/uploads/default-blog.svg",

@@ -30,6 +30,7 @@ export default function AdminBlogs() {
       .finally(() => setLoading(false));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => loadPosts(), []);
 
   const handleDelete = async (id: number) => {

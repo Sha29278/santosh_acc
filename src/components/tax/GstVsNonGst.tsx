@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import {
   BadgePercent,
-  DollarSign,
+  IndianRupee,
   ShoppingBag,
   TrendingDown,
   PiggyBank,
@@ -211,7 +211,7 @@ export default function GstVsNonGst() {
                 Base Price (Without GST ₹)
               </label>
               <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="number"
                   value={price}

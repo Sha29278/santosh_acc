@@ -6,13 +6,11 @@ import { motion } from "framer-motion";
 import {
   FileText,
   Briefcase,
-  MessageSquare,
   HelpCircle,
-  Image,
   ArrowRight,
-  TrendingUp,
   Edit3,
   Eye,
+  Image,
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -78,7 +76,7 @@ export default function AdminDashboard() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-slate-500 mt-1">Welcome to the TaxEase admin panel</p>
+        <p className="text-slate-500 mt-1">Welcome to the AccTax Solutions admin panel</p>
       </div>
 
       {/* Quick Stats */}
