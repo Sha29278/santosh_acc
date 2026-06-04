@@ -154,6 +154,9 @@ export async function saveBase64Image(
  * Delete a file by URL — works for both Vercel Blob URLs and local paths.
  */
 export async function deleteFileByUrl(url: string): Promise<void> {
+  // Never delete default placeholder images
+  if (url.includes("/default-") || url.includes("default-blog")) return;
+
   // Vercel Blob URL
   if (url.includes("blob.vercel-storage.com")) {
     try {
