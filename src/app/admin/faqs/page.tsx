@@ -21,6 +21,7 @@ export default function AdminFAQs() {
     if (cached && cached.length > 0) {
       setFaqs(cached);
       setLoading(false);
+      return;
     }
     fetch("/api/data/faqs")
       .then((r) => r.json())

@@ -45,6 +45,7 @@ export default function AdminServices() {
     if (cached && cached.length > 0) {
       setServices(cached);
       setLoading(false);
+      return;
     }
     fetch("/api/data/services")
       .then((r) => r.json())

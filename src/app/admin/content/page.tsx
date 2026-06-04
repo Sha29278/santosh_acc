@@ -57,6 +57,7 @@ export default function AdminContent() {
     if (cached && Object.keys(cached).length > 0) {
       setContent(cached);
       setLoading(false);
+      return; // Don't fetch from API — stale data would overwrite cache
     }
     fetch("/api/site-content")
       .then((r) => r.json())

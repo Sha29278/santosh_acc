@@ -36,13 +36,14 @@ export default function AdminSettings() {
   });
 
   useEffect(() => {
-    // 1. Load from localStorage instantly (no loading screen)
+    // Load from localStorage cache — user's saved data is always most recent
     const cached = loadCache<SiteConfig>("site-config");
     if (cached && cached.siteName) {
       setConfig(cached);
       setLoading(false);
+      return; // Don't fetch from API — stale server data would overwrite cache
     }
-    // 2. Fetch from API in background to get latest server data
+    // First visit (no cache): fetch from API
     fetch("/api/site-config")
       .then((r) => r.json())
       .then((data) => {

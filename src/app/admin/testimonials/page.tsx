@@ -33,6 +33,7 @@ export default function AdminTestimonials() {
     if (cached && cached.length > 0) {
       setItems(cached);
       setLoading(false);
+      return;
     }
     fetch("/api/testimonials")
       .then((r) => r.json())

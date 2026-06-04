@@ -79,8 +79,11 @@ export default function AdminTaxSlabs() {
     };
     // Load from cache first
     const cached = loadCache<Record<string, unknown>>("tax-slabs");
-    if (cached) applyData(cached);
-    // Then fetch from API
+    if (cached && cached.oldSlabs) {
+      applyData(cached);
+      setLoading(false);
+      return;
+    }
     fetch("/api/data/tax-slabs")
       .then((r) => r.json())
       .then((data) => { applyData(data); saveCache("tax-slabs", data); })
