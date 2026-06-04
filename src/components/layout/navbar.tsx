@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,6 +8,7 @@ import { Menu, X, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/ui/logo";
 import { useLanguage } from "@/lib/i18n";
+import { useSiteConfig } from "@/lib/use-site-config";
 
 const navLinks = (t: ReturnType<typeof useLanguage>["t"]) => [
   { href: "/", label: t.nav.home },
@@ -22,27 +23,18 @@ const navLinks = (t: ReturnType<typeof useLanguage>["t"]) => [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [logoUrl, setLogoUrl] = useState("");
-  const [phone, setPhone] = useState("+91 9613461462");
   const pathname = usePathname();
   const { t } = useLanguage();
+  const config = useSiteConfig();
 
-  useEffect(() => {
-    fetch("/api/site-config")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data?.logoUrl) setLogoUrl(data.logoUrl);
-        if (data?.contactPhone) setPhone(data.contactPhone);
-      })
-      .catch(() => {});
-  }, []);
+  const phone = config.contactPhone || "+91 9613461462";
+  const logoUrl = config.logoUrl || "";
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
   };
 
-  // Fix the navLinks to include t as a dependency
   const links = navLinks(t);
 
   return (
@@ -88,7 +80,7 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <a href={`tel:${phone.replace(/\s+/g, '')}`} className="flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors">
+            <a href={`tel:${phone.replace(/\s+/g, "")}`} className="flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors">
               <Phone className="w-4 h-4" />
               <span>{phone}</span>
             </a>

@@ -1,29 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import { Phone, Mail, MapPin, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 import Logo from "@/components/ui/logo";
+import { useSiteConfig } from "@/lib/use-site-config";
 
 export default function Footer() {
-  const [logoUrl, setLogoUrl] = useState("");
-  const [config, setConfig] = useState<{ contactPhone?: string; contactEmail?: string; address?: string }>({});
   const { t } = useLanguage();
-
-  useEffect(() => {
-    fetch("/api/site-config")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data?.logoUrl) setLogoUrl(data.logoUrl);
-        setConfig({
-          contactPhone: data?.contactPhone,
-          contactEmail: data?.contactEmail,
-          address: data?.address,
-        });
-      })
-      .catch(() => {});
-  }, []);
+  const config = useSiteConfig();
+  const phone = config.contactPhone || "+91 9613461462";
+  const email = config.contactEmail || "info@acctaxsolutions.in";
+  const address = config.address || "Fancy Ali, Jorhat, Assam - 785001";
+  const phoneHref = phone.replace(/\s+/g, "");
 
   const footerLinks = {
     services: [
@@ -54,9 +43,9 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="mb-4 inline-block">
-              {logoUrl ? (
+              {config.logoUrl ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={logoUrl} alt="AccTax Solutions" className="h-10 w-auto object-contain" />
+                <img src={config.logoUrl} alt="AccTax Solutions" className="h-10 w-auto object-contain" />
               ) : (
                 <Logo />
               )}
@@ -65,23 +54,23 @@ export default function Footer() {
               {t.footer.tagline}
             </p>
             <div className="space-y-3">
-              <a href={`tel:${(config.contactPhone || '+919613461462').replace(/\s+/g, '')}`} className="flex items-center gap-3 text-sm text-slate-400 hover:text-blue-400 transition-colors group">
+              <a href={`tel:${phoneHref}`} className="flex items-center gap-3 text-sm text-slate-400 hover:text-blue-400 transition-colors group">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/30 transition-colors">
                   <Phone className="w-4 h-4 text-blue-400" />
                 </div>
-                {config.contactPhone || '+91 9613461462'}
+                {phone}
               </a>
-              <a href={`mailto:${config.contactEmail || 'info@acctaxsolutions.in'}`} className="flex items-center gap-3 text-sm text-slate-400 hover:text-indigo-400 transition-colors group">
+              <a href={`mailto:${email}`} className="flex items-center gap-3 text-sm text-slate-400 hover:text-indigo-400 transition-colors group">
                 <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors">
                   <Mail className="w-4 h-4 text-indigo-400" />
                 </div>
-                {config.contactEmail || 'info@acctaxsolutions.in'}
+                {email}
               </a>
               <div className="flex items-start gap-3 text-sm text-slate-400 group">
                 <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center">
                   <MapPin className="w-4 h-4 text-sky-400" />
                 </div>
-                <span className="pt-1.5">{config.address || 'Fancy Ali, Jorhat, Assam — 785001'}</span>
+                <span className="pt-1.5">{address}</span>
               </div>
             </div>
           </div>
@@ -148,8 +137,7 @@ export default function Footer() {
             <Link href="/privacy-policy" className="text-sm text-slate-500 hover:text-blue-400 transition-colors">
               {t.footer.privacyPolicy}
             </Link>
-            <Link href="/terms" className="text-sm text-slate-500 hover:text-indigo-400 transition-colors">
-              {t.footer.termsOfService}
+            <Link href="/terms" className="text-sm text-slate-500 hover:text-indigo-400 transition-colors">                    {t.footer.termsOfService}
             </Link>
           </div>
         </div>

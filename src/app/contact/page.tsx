@@ -1,35 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ContactSection from "@/components/sections/contact-section";
 import SectionTitle from "@/components/ui/section-title";
 import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Mail, ExternalLink, Sparkles, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
-
-interface SiteConfig {
-  contactPhone?: string;
-  contactEmail?: string;
-  address?: string;
-}
+import { useSiteConfig } from "@/lib/use-site-config";
 
 export default function ContactPage() {
   const { t } = useLanguage();
-  const [config, setConfig] = useState<SiteConfig>({});
-
-  useEffect(() => {
-    fetch("/api/site-config")
-      .then((r) => r.json())
-      .then((data) => {
-        setConfig({
-          contactPhone: data?.contactPhone,
-          contactEmail: data?.contactEmail,
-          address: data?.address,
-        });
-      })
-      .catch(() => {});
-  }, []);
+  const config = useSiteConfig();
 
   const phone = config.contactPhone || "+91 9613461462";
   const email = config.contactEmail || "info@acctaxsolutions.in";
