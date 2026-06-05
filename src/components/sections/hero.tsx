@@ -6,6 +6,7 @@ import Link from "next/link";
 import Button from "@/components/ui/button";
 import { ArrowRight, Phone, Shield, CalendarDays, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
+import { useSiteConfig } from "@/lib/use-site-config";
 
 interface ApiDueDate {
   id: string;
@@ -273,16 +274,8 @@ function AnimatedCalendar() {
 
 export default function HeroSection() {
   const { t } = useLanguage();
-  const [logoUrl, setLogoUrl] = useState("");
-
-  useEffect(() => {
-    fetch("/api/site-config")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data?.logoUrl) setLogoUrl(data.logoUrl);
-      })
-      .catch(() => {});
-  }, []);
+  const config = useSiteConfig();
+  const logoUrl = config.logoUrl || "";
 
   return (
     <section className="relative min-h-[80vh] sm:min-h-[90vh] flex items-start lg:items-center overflow-x-hidden gradient-hero">
