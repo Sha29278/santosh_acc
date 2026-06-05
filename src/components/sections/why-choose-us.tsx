@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import SectionTitle from "@/components/ui/section-title";
-import { whyChooseUs } from "@/data/site-data";
+import { useSiteData } from "@/lib/admin/data-context";
 import { Award, Users, CheckCircle, Shield } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
@@ -37,6 +37,7 @@ const cardVariants = {
 
 export default function WhyChooseUs() {
   const { t } = useLanguage();
+  const { whyChooseUs } = useSiteData();
   return (
     <section className="relative py-20 lg:py-28 bg-gradient-to-br from-blue-50 via-indigo-50 to-sky-50 overflow-hidden">
       <motion.div

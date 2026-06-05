@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import SectionTitle from "@/components/ui/section-title";
-import { processSteps } from "@/data/site-data";
+import { useSiteData } from "@/lib/admin/data-context";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
@@ -34,6 +34,7 @@ const stepVariants = {
 
 export default function ProcessTimeline() {
   const { t } = useLanguage();
+  const { processSteps } = useSiteData();
   return (
     <section className="relative py-20 lg:py-28 bg-gradient-to-br from-blue-50 via-white to-indigo-50 overflow-hidden">
       <motion.div

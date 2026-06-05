@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import SectionTitle from "@/components/ui/section-title";
 import { Card } from "@/components/ui/card";
-import { services } from "@/data/site-data";
+import { useServices } from "@/lib/admin/data-context";
 import { ArrowRight, FileCheck, FileText, Landmark, Receipt, Building2, Briefcase, Rocket, Building, Calculator, Users, SearchCheck, Lightbulb } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
@@ -36,6 +36,7 @@ const cardVariants = {
 
 export default function ServicesSection() {
   const { t } = useLanguage();
+  const services = useServices();
   return (
     <section
       id="services"

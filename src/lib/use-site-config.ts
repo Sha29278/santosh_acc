@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 const CACHE_KEY = "site_config_cache";
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 30 * 1000; // 30 seconds (reduced from 5 min)
 
 interface SiteConfig {
   contactPhone?: string;
@@ -67,14 +67,30 @@ function initFromCache() {
 
 export function useSiteConfig(): SiteConfig {
   const [, setTick] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     initFromCache();
     const listener = () => setTick((t) => t + 1);
     listeners.push(listener);
     fetchConfig();
+
+    // Poll every 30 seconds
+    intervalRef.current = setInterval(fetchConfig, 30000);
+
+    // Re-fetch instantly when user returns to the tab
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        lastFetch = 0; // Force re-fetch
+        fetchConfig();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
     return () => {
       listeners = listeners.filter((fn) => fn !== listener);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 

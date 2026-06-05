@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionTitle from "@/components/ui/section-title";
-import { faqs } from "@/data/site-data";
+import { useFaqs } from "@/lib/admin/data-context";
 import { ChevronDown } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
 export default function FAQSection() {
   const { t } = useLanguage();
+  const faqs = useFaqs();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
