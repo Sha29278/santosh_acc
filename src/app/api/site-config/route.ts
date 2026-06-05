@@ -8,6 +8,7 @@ interface SiteConfig {
   adminEmail?: string;
   siteName: string;
   siteDescription: string;
+  heroBadge: string;
   contactEmail: string;
   contactPhone: string;
   address: string;
@@ -28,6 +29,7 @@ export async function GET() {
     adminPassword: "admin@123",
     siteName: "AccTax Solutions",
     siteDescription: "Your Trusted GST & Taxation Partner",
+    heroBadge: "Trusted by businesses across India",
     contactEmail: "info@acctaxsolutions.in",
     contactPhone: "+91 9613461462",
     address: "Fancy Ali, Jorhat, Assam - 785001",
@@ -49,6 +51,7 @@ export async function PUT(request: Request) {
       adminPassword: "admin@123",
       siteName: "AccTax Solutions",
       siteDescription: "Your Trusted GST & Taxation Partner",
+      heroBadge: "Trusted by businesses across India",
       contactEmail: "info@acctaxsolutions.in",
       contactPhone: "+91 9613461462",
       address: "Fancy Ali, Jorhat, Assam - 785001",
@@ -64,6 +67,7 @@ export async function PUT(request: Request) {
       adminEmail: body.adminEmail ?? current.adminEmail ?? "",
       siteName: body.siteName ?? current.siteName,
       siteDescription: body.siteDescription ?? current.siteDescription,
+      heroBadge: body.heroBadge ?? current.heroBadge,
       contactEmail: body.contactEmail ?? current.contactEmail,
       contactPhone: body.contactPhone ?? current.contactPhone,
       address: body.address ?? current.address,

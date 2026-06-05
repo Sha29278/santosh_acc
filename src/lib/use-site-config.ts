@@ -10,6 +10,7 @@ interface SiteConfig {
   contactEmail?: string;
   address?: string;
   siteName?: string;
+  heroBadge?: string;
   logoUrl?: string;
 }
 
@@ -18,6 +19,7 @@ const defaults: SiteConfig = {
   contactEmail: "info@acctaxsolutions.in",
   address: "Fancy Ali, Jorhat, Assam - 785001",
   siteName: "AccTax Solutions",
+  heroBadge: "Trusted by businesses across India",
   logoUrl: "",
 };
 

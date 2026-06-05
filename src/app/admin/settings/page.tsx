@@ -10,6 +10,7 @@ interface SiteConfig {
   adminEmail: string;
   siteName: string;
   siteDescription: string;
+  heroBadge: string;
   contactEmail: string;
   contactPhone: string;
   address: string;
@@ -31,6 +32,7 @@ export default function AdminSettings() {
     adminEmail: "",
     siteName: "",
     siteDescription: "",
+    heroBadge: "",
     contactEmail: "",
     contactPhone: "",
     address: "",
@@ -247,6 +249,17 @@ export default function AdminSettings() {
                 onChange={(e) => update("siteDescription", e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Hero Trust Badge</label>
+              <input
+                type="text"
+                value={config.heroBadge}
+                onChange={(e) => update("heroBadge", e.target.value)}
+                placeholder="Trusted by businesses across India"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+              />
+              <p className="text-xs text-slate-400 mt-1">Text shown beside the shield icon in the hero section</p>
             </div>
           </div>
         </div>
