@@ -224,11 +224,29 @@ const DEFAULT_CONTENT: Record<string, Record<string, unknown>> = {
   },
 };
 
+function deepMerge(obj1: Record<string, unknown>, obj2: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = { ...obj1 };
+  for (const key of Object.keys(obj2)) {
+    if (obj2[key] !== null && typeof obj2[key] === 'object' && !Array.isArray(obj2[key])) {
+      if (obj1[key] && typeof obj1[key] === 'object' && !Array.isArray(obj1[key])) {
+        result[key] = deepMerge(obj1[key] as Record<string, unknown>, obj2[key] as Record<string, unknown>);
+      } else {
+        result[key] = obj2[key];
+      }
+    } else if (obj2[key] !== undefined) {
+      result[key] = obj2[key];
+    }
+  }
+  return result;
+}
+
 export async function GET() {
-  const content = await readJSON<Record<string, Record<string, unknown>>>(
+  const saved = await readJSON<Record<string, Record<string, unknown>>>(
     "site-content.json",
-    DEFAULT_CONTENT,
+    {} as Record<string, Record<string, unknown>>,
   );
+  // Deep merge: saved values override defaults, but defaults fill in any missing sections/fields
+  const content = deepMerge(DEFAULT_CONTENT, saved);
   return NextResponse.json(content);
 }
 
