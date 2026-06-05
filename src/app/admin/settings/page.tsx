@@ -16,6 +16,8 @@ interface SiteConfig {
   logoUrl?: string;
 }
 
+const MASKED_PASSWORD = "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"; // matches API
+
 export default function AdminSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -25,7 +27,7 @@ export default function AdminSettings() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [config, setConfig] = useState<SiteConfig>({
     adminUsername: "",
-    adminPassword: "••••••••",
+    adminPassword: MASKED_PASSWORD,
     adminEmail: "",
     siteName: "",
     siteDescription: "",
@@ -312,7 +314,8 @@ export default function AdminSettings() {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  value={config.adminPassword}
+                  value={showPassword && config.adminPassword === MASKED_PASSWORD ? "" : config.adminPassword}
+                  placeholder={showPassword && config.adminPassword === MASKED_PASSWORD ? "Type a new password to change" : ""}
                   onChange={(e) => update("adminPassword", e.target.value)}
                   className="w-full pr-10 px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
                 />
