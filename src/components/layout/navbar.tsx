@@ -44,10 +44,14 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5">
-            <Logo title={siteName} />
-            {logoUrl && (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img src={logoUrl} alt="Company Logo" className="h-9 w-auto object-contain" />
+            {logoUrl ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoUrl} alt="Company Logo" className="h-9 w-auto object-contain" />
+                <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">{siteName}</span>
+              </>
+            ) : (
+              <Logo title={siteName} />
             )}
           </Link>
 

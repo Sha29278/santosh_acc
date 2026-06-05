@@ -44,10 +44,14 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="mb-4 inline-flex items-center gap-3">
-              <Logo title={siteName} />
-              {config.logoUrl && (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={config.logoUrl} alt="Company Logo" className="h-10 w-auto object-contain" />
+              {config.logoUrl ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={config.logoUrl} alt="Company Logo" className="h-10 w-auto object-contain" />
+                  <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">{siteName}</span>
+                </>
+              ) : (
+                <Logo title={siteName} />
               )}
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
