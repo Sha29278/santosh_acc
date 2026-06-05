@@ -30,7 +30,7 @@ export default function Logo({ className = "", size = 40, showTagline = false, t
         </svg>
       </div>
       <div>
-        <span className={`text-lg font-bold ${dark ? "text-slate-900" : "text-white"}`}>
+        <span className={`text-xl sm:text-2xl font-extrabold tracking-tight ${dark ? "text-slate-900" : "text-white"}`}>
           {title}
         </span>
         {showTagline && tagline && (
