@@ -52,6 +52,8 @@ export default function AdminContent() {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [accordionOpen, setAccordionOpen] = useState<Record<string, boolean>>({});
+  const [newFieldName, setNewFieldName] = useState<Record<string, string>>({});
+  const [newFieldValue, setNewFieldValue] = useState<Record<string, string>>({});
   const [content, setContent] = useState<ContentData>({});
 
   const toggleAccordion = (section: string) => {
@@ -61,15 +63,34 @@ export default function AdminContent() {
   const ALL_SECTIONS = ["hero", "nav", "footer", "about", "whyChooseUs", "process", "pricing", "blog", "faq", "contact", "taxCalculator", "complianceCalendar", "common", "privacyPolicy", "terms"];
 
   useEffect(() => {
+    // Show cached data instantly, then always fetch fresh from API
     const cached = loadCache<ContentData>("site-content");
     if (cached && Object.keys(cached).length > 0) {
       setContent(cached);
-      setLoading(false);
-      return; // Don't fetch from API — stale data would overwrite cache
     }
     fetch("/api/site-content")
       .then((r) => r.json())
-      .then((data) => { if (data) { setContent(data); saveCache("site-content", data); } })
+      .then((data) => {
+        if (data && Object.keys(data).length > 0) {
+          // Merge: API data is base, cached values override (admin may have unsaved changes)
+          setContent((prev) => {
+            const merged = { ...data };
+            // Only merge cached fields that exist in API data structure
+            if (cached && Object.keys(cached).length > 0) {
+              for (const section of Object.keys(data)) {
+                if (cached[section] && typeof cached[section] === 'object' && !Array.isArray(cached[section])) {
+                  merged[section] = { ...data[section], ...cached[section] };
+                } else if (cached[section]) {
+                  merged[section] = cached[section];
+                }
+              }
+            }
+            saveCache("site-content", merged);
+            return merged;
+          });
+        }
+      })
+      .catch(() => {/* API fetch failed — cached data is already shown */})
       .finally(() => setLoading(false));
   }, []);
 
@@ -417,14 +438,31 @@ export default function AdminContent() {
                                 // Simple string value
                                 const strVal = String(fieldValue || '');
                                 return (
-                                  <Input
-                                    key={fieldKey}
-                                    label={fieldKey.replace(/([A-Z])/g, ' $1').trim()}
-                                    value={strVal}
-                                    onChange={(v) => updateField(sectionKey, fieldKey, v)}
-                                    multiline={strVal.length > 80}
-                                    rows={3}
-                                  />
+                                  <div key={fieldKey} className="relative group">
+                                    <div className="absolute right-0 top-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <button
+                                        onClick={() => {
+                                          // Delete this field by setting it to undefined
+                                          setContent((prev) => {
+                                            const section = { ...(prev[sectionKey] || {}) };
+                                            delete section[fieldKey];
+                                            return { ...prev, [sectionKey]: section };
+                                          });
+                                        }}
+                                        className="p-1 rounded text-slate-400 hover:text-red-600 bg-white shadow-sm border border-slate-200"
+                                        title="Delete this field"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </button>
+                                    </div>
+                                    <Input
+                                      label={fieldKey.replace(/([A-Z])/g, ' $1').trim()}
+                                      value={strVal}
+                                      onChange={(v) => updateField(sectionKey, fieldKey, v)}
+                                      multiline={strVal.length > 80}
+                                      rows={3}
+                                    />
+                                  </div>
                                 );
                               }
                             })
@@ -432,6 +470,39 @@ export default function AdminContent() {
                             <div className="text-sm text-slate-400 py-4 text-center">No data in this section</div>
                           )
                         }
+                        <div className="border-t border-slate-100 pt-3 mt-4">
+                          <label className="block text-xs font-medium text-slate-500 mb-2">Add Custom Field</label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              placeholder="Field name"
+                              value={newFieldName[sectionKey] || ''}
+                              onChange={(e) => setNewFieldName((prev) => ({ ...prev, [sectionKey]: e.target.value }))}
+                              className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Field value"
+                              value={newFieldValue[sectionKey] || ''}
+                              onChange={(e) => setNewFieldValue((prev) => ({ ...prev, [sectionKey]: e.target.value }))}
+                              className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                            />
+                            <button
+                              onClick={() => {
+                                const name = (newFieldName[sectionKey] || '').trim();
+                                const value = newFieldValue[sectionKey] || '';
+                                if (name) {
+                                  updateField(sectionKey, name, value);
+                                  setNewFieldName((prev) => ({ ...prev, [sectionKey]: '' }));
+                                  setNewFieldValue((prev) => ({ ...prev, [sectionKey]: '' }));
+                                }
+                              }}
+                              className="px-3 py-2 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-all shrink-0"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1022,6 +1093,43 @@ export default function AdminContent() {
                   value={(content.common || {})[key] || ""}
                   onChange={(v) => updateField("common", key, v)} />
               ))}
+            </div>
+          )}
+
+          {/* ========= ADD CUSTOM FIELD (for individual tabs) ========= */}
+          {activeTab !== "all" && (
+            <div className="border-t border-slate-100 pt-4">
+              <label className="block text-xs font-medium text-slate-500 mb-2">Add Custom Field to this Section</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Field name"
+                  value={newFieldName[activeTab] || ''}
+                  onChange={(e) => setNewFieldName((prev) => ({ ...prev, [activeTab]: e.target.value }))}
+                  className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                />
+                <input
+                  type="text"
+                  placeholder="Field value"
+                  value={newFieldValue[activeTab] || ''}
+                  onChange={(e) => setNewFieldValue((prev) => ({ ...prev, [activeTab]: e.target.value }))}
+                  className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                />
+                <button
+                  onClick={() => {
+                    const name = (newFieldName[activeTab] || '').trim();
+                    const value = newFieldValue[activeTab] || '';
+                    if (name) {
+                      updateField(activeTab, name, value);
+                      setNewFieldName((prev) => ({ ...prev, [activeTab]: '' }));
+                      setNewFieldValue((prev) => ({ ...prev, [activeTab]: '' }));
+                    }
+                  }}
+                  className="px-3 py-2 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-all shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
         </div>
