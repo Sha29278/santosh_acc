@@ -32,10 +32,34 @@ const defaultData: SiteData = {
   processSteps: staticProcessSteps,
 };
 
+const CACHE_KEY = "site_data_cache";
+
 const SiteDataContext = createContext<SiteData>(defaultData);
 
+function loadCachedData(): SiteData | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.services) return parsed as SiteData;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function saveCachedData(data: SiteData) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch {
+    // localStorage full — ignore
+  }
+}
+
 export function SiteDataProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<SiteData>(defaultData);
+  // Initialize from localStorage cache first (avoids showing defaults during redeploy)
+  const cached = loadCachedData();
+  const [data, setData] = useState<SiteData>(cached || defaultData);
   const controllerRef = useRef<AbortController | null>(null);
 
   // Fetch site data with AbortController to prevent overlapping requests.
@@ -49,12 +73,15 @@ export function SiteDataProvider({ children }: { children: ReactNode }) {
     fetch("/api/site-data", { signal: controller.signal })
       .then((r) => r.json())
       .then((apiData) => {
-        if (apiData && apiData.services) setData(apiData as SiteData);
+        if (apiData && apiData.services) {
+          setData(apiData as SiteData);
+          saveCachedData(apiData as SiteData);
+        }
       })
       .catch((err) => {
         // Ignore aborted requests
         if (err?.name !== "AbortError") {
-          // Fallback to static data already set
+          // Fallback to cached / static data
         }
       });
   }, []);

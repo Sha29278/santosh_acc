@@ -5,16 +5,16 @@ import { commitTextFile, commitBinaryFile, deleteRepoFile, isGitDeployEnabled } 
 const DATA_DIR = path.join(process.cwd(), "data");
 const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 
-// ---------- in-memory cache for Vercel persistence ----------
-
-/**
- * In-memory cache for JSON data. On Vercel, the filesystem is read-only, so
- * writes go to GitHub only. Between the save and the next Vercel deploy,
- * this cache ensures readJSON returns the latest data instead of stale
- * build-time data. Each serverless function instance has its own cache,
- * so this covers same-instance reads (admin panel saves then re-reads).
- */
-const cache = new Map<string, unknown>();
+// ---------- Data consistency strategy ----------
+//
+// readJSON  → Always reads from the deployed filesystem (consistent
+//              across all Vercel instances). No in-memory cache.
+// writeJSON → Writes to filesystem (local) + commits to GitHub.
+//             The admin panel's client-cache.ts handles the admin's
+//             own immediate read-after-write via localStorage.
+//
+// After the git commit, Vercel auto-deploys (~30-60s) and all
+// instances serve the same updated data — no yo-yo effect.
 
 // ---------- helpers ----------
 
@@ -54,18 +54,12 @@ function safeUnlinkSync(filepath: string): boolean {
 // ---------- JSON data (filesystem + cache + git deploy) ----------
 
 /**
- * Read JSON data — checks cache first, then filesystem.
- * On Vercel, cache holds data saved during this serverless instance's lifetime.
- * Filesystem holds data from the last build (baked in at deploy time).
- * Falls back to default if neither has the data.
+ * Read JSON data — reads directly from the deployed filesystem.
+ * Skips the in-memory cache entirely to ensure consistent data
+ * across all Vercel serverless instances (no yo-yo effect).
+ * Falls back to default if file doesn't exist.
  */
 export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
-  // 1. Check in-memory cache (most recent, written during this instance)
-  if (cache.has(filename)) {
-    return cache.get(filename) as T;
-  }
-
-  // 2. Read from filesystem (from last build/deploy)
   try {
     const fp = filePath(filename);
     if (!fs.existsSync(fp)) return fallback;
@@ -83,13 +77,10 @@ export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
 export async function writeJSON<T>(filename: string, data: T): Promise<void> {
   const content = JSON.stringify(data, null, 2);
 
-  // 1. Update in-memory cache (immediate reads)
-  cache.set(filename, data);
-
-  // 2. Write to filesystem (works locally, silently fails on Vercel)
+  // 1. Write to filesystem (works locally, silently fails on Vercel)
   safeWriteFileSync(filePath(filename), content);
 
-  // 3. Commit to GitHub (triggers Vercel redeploy for other instances)
+  // 2. Commit to GitHub (triggers Vercel redeploy for all instances)
   if (isGitDeployEnabled()) {
     const committed = await commitTextFile(
       `data/${filename}`,
