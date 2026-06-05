@@ -2,10 +2,10 @@
   "adminUsername": "santosh",
   "adminPassword": "admin@123",
   "adminEmail": "admin@acctaxsolutions.in",
-  "siteName": "AccTax Solutions",
+  "siteName": "AccTax Solution",
   "siteDescription": "Your Trusted GST & Taxation Partner",
   "contactEmail": "info@acctaxsolutions.in",
   "contactPhone": "+91 9613461462",
   "address": "Fancy Ali near moharram field, jorhat(Assam) - 785001",
-  "logoUrl": "/uploads/test-logo.svg"
+  "logoUrl": ""
 }
