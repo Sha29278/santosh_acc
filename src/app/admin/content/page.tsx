@@ -50,7 +50,7 @@ export default function AdminContent() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<TabKey>("hero");
+  const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [accordionOpen, setAccordionOpen] = useState<Record<string, boolean>>({});
   const [content, setContent] = useState<ContentData>({});
 
