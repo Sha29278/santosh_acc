@@ -6,7 +6,6 @@ import Link from "next/link";
 import Button from "@/components/ui/button";
 import { ArrowRight, Phone, Shield, CalendarDays, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
-import { useSiteConfig } from "@/lib/use-site-config";
 
 interface ApiDueDate {
   id: string;
@@ -274,8 +273,6 @@ function AnimatedCalendar() {
 
 export default function HeroSection() {
   const { t } = useLanguage();
-  const config = useSiteConfig();
-  const logoUrl = config.logoUrl || "";
 
   return (
     <section className="relative min-h-[80vh] sm:min-h-[90vh] flex items-start lg:items-center overflow-x-hidden gradient-hero">
@@ -303,14 +300,6 @@ export default function HeroSection() {
               transition={{ delay: 0.2 }}
               className="flex items-center gap-3 sm:gap-4 flex-wrap mb-3 sm:mb-6"
             >
-              {logoUrl && (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={logoUrl}
-                  alt="AccTax Solutions"
-                  className="h-10 sm:h-12 w-auto object-contain"
-                />
-              )}
               <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm">
                 <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
                 <span className="text-xs sm:text-sm font-medium text-white/90">{t.hero.trustBadge}</span>
