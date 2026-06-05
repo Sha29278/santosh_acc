@@ -4,9 +4,10 @@ interface LogoProps {
   showTagline?: boolean;
   tagline?: string;
   dark?: boolean;
+  title?: string;
 }
 
-export default function Logo({ className = "", size = 40, showTagline = false, tagline, dark = false }: LogoProps) {
+export default function Logo({ className = "", size = 40, showTagline = false, tagline, dark = false, title = "AccTax Solutions" }: LogoProps) {
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
       <div className="flex items-center justify-center" style={{ width: size, height: size }}>
@@ -30,7 +31,7 @@ export default function Logo({ className = "", size = 40, showTagline = false, t
       </div>
       <div>
         <span className={`text-lg font-bold ${dark ? "text-slate-900" : "text-white"}`}>
-          AccTax Solutions
+          {title}
         </span>
         {showTagline && tagline && (
           <span className={`block text-xs font-medium ${dark ? "text-slate-500" : "text-slate-400"}`}>

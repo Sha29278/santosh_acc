@@ -28,7 +28,7 @@ export default function Navbar() {
   const config = useSiteConfig();
 
   const phone = config.contactPhone || "+91 9613461462";
-  const logoUrl = config.logoUrl || "";
+  const siteName = config.siteName || "AccTax Solutions";
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -43,11 +43,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5">
-            <Logo />
-              {logoUrl && (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={logoUrl} alt="Company Logo" className="h-9 w-auto object-contain" />
-              )}
+            <Logo title={siteName} />
           </Link>
 
           {/* Desktop Nav */}
