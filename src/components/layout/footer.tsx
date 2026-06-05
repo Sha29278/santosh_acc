@@ -43,8 +43,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="mb-4 inline-block">
+            <Link href="/" className="mb-4 inline-flex items-center gap-3">
               <Logo title={siteName} />
+              {config.logoUrl && (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={config.logoUrl} alt="Company Logo" className="h-10 w-auto object-contain" />
+              )}
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
               {t.footer.tagline}

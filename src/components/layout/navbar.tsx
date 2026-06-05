@@ -29,6 +29,7 @@ export default function Navbar() {
 
   const phone = config.contactPhone || "+91 9613461462";
   const siteName = config.siteName || "AccTax Solutions";
+  const logoUrl = config.logoUrl || "";
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -44,6 +45,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5">
             <Logo title={siteName} />
+            {logoUrl && (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={logoUrl} alt="Company Logo" className="h-9 w-auto object-contain" />
+            )}
           </Link>
 
           {/* Desktop Nav */}
