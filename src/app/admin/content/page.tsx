@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";import { Save, Layout, Navigation2, Info, Award, ListOrdered,
   DollarSign, FileText, HelpCircle, Mail, Calculator,
-  Calendar, Plus, Trash2,
+  Calendar, Plus, Trash2, ChevronDown,
 } from "lucide-react";
 import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
@@ -11,7 +11,7 @@ interface ContentData {
   [key: string]: any;
 }
 
-type TabKey = "hero" | "nav" | "footer" | "about" | "whyChooseUs" | "process" | "pricing" | "blog" | "faq" | "contact" | "taxCalculator" | "complianceCalendar" | "common" | "privacyPolicy" | "terms";
+type TabKey = "all" | "hero" | "nav" | "footer" | "about" | "whyChooseUs" | "process" | "pricing" | "blog" | "faq" | "contact" | "taxCalculator" | "complianceCalendar" | "common" | "privacyPolicy" | "terms";
 
 const Input = ({ label, value, onChange, multiline = false, rows = 2 }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean; rows?: number }) => (
     <div>
@@ -27,6 +27,7 @@ const Input = ({ label, value, onChange, multiline = false, rows = 2 }: { label:
   );
 
 const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { key: "all", label: "All Data", icon: Layout },
   { key: "hero", label: "Hero Section", icon: Layout },
   { key: "nav", label: "Navigation", icon: Navigation2 },
   { key: "footer", label: "Footer", icon: Navigation2 },
@@ -50,7 +51,14 @@ export default function AdminContent() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<TabKey>("hero");
+  const [accordionOpen, setAccordionOpen] = useState<Record<string, boolean>>({});
   const [content, setContent] = useState<ContentData>({});
+
+  const toggleAccordion = (section: string) => {
+    setAccordionOpen((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  const ALL_SECTIONS = ["hero", "nav", "footer", "about", "whyChooseUs", "process", "pricing", "blog", "faq", "contact", "taxCalculator", "complianceCalendar", "common", "privacyPolicy", "terms"];
 
   useEffect(() => {
     const cached = loadCache<ContentData>("site-content");
@@ -224,6 +232,214 @@ export default function AdminContent() {
           </span>
         </div>
         <div className="p-5 space-y-6">
+          {/* ========= ALL DATA TAB ========= */}
+          {activeTab === "all" && (
+            <div className="space-y-4">
+              <p className="text-sm text-slate-500 mb-4">All content sections in one view. Click a section to expand and edit.</p>
+              {ALL_SECTIONS.map((sectionKey) => {
+                const sectionData = content[sectionKey];
+                const isOpen = accordionOpen[sectionKey] !== false;
+                return (
+                  <div key={sectionKey} className="border border-slate-200 rounded-xl overflow-hidden">
+                    <button
+                      onClick={() => toggleAccordion(sectionKey)}
+                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+                    >
+                      <span className="text-sm font-semibold text-slate-700 capitalize">
+                        {sectionKey.replace(/([A-Z])/g, ' $1').trim()} Section
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isOpen && (
+                      <div className="p-4 space-y-4">
+                        {sectionData && typeof sectionData === 'object' && !Array.isArray(sectionData)
+                          ? Object.entries(sectionData).map(([fieldKey, fieldValue]) => {
+                              if (Array.isArray(fieldValue)) {
+                                if (fieldValue.length > 0 && typeof fieldValue[0] === 'object') {
+                                  // Array of objects (e.g., items, steps, highlights)
+                                  return (
+                                    <div key={fieldKey}>
+                                      <label className="block text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">
+                                        {fieldKey.replace(/([A-Z])/g, ' $1').trim()}
+                                      </label>
+                                      {(fieldValue as any[]).map((item: any, idx: number) => (
+                                        <div key={idx} className="bg-slate-50 rounded-lg p-3 mb-2 space-y-2">
+                                          <div className="flex items-center justify-between">
+                                            <span className="text-xs font-semibold text-slate-400">Item {idx + 1}</span>
+                                            <button onClick={() => {
+                                              const arr = [...((content[sectionKey] || {})[fieldKey] || [])];
+                                              arr.splice(idx, 1);
+                                              updateField(sectionKey, fieldKey, arr);
+                                            }} className="p-0.5 rounded text-slate-400 hover:text-red-600"><Trash2 className="w-3 h-3" /></button>
+                                          </div>
+                                          {Object.entries(item).map(([k, v]) => (
+                                            <div key={k}>
+                                              <Input
+                                                label={k.replace(/([A-Z])/g, ' $1').trim()}
+                                                value={String(v || '')}
+                                                onChange={(newVal) => {
+                                                  const arr = [...((content[sectionKey] || {})[fieldKey] || [])];
+                                                  arr[idx] = { ...arr[idx], [k]: newVal };
+                                                  updateField(sectionKey, fieldKey, arr);
+                                                }}
+                                                multiline={typeof v === 'string' && v.length > 80}
+                                                rows={3}
+                                              />
+                                            </div>
+                                          ))}
+                                        </div>
+                                      ))}
+                                      <button onClick={() => {
+                                        const arr = [...((content[sectionKey] || {})[fieldKey] || [])];
+                                        const template = fieldValue.length > 0
+                                          ? Object.fromEntries(Object.entries(fieldValue[0]).map(([k]) => [k, '']))
+                                          : {};
+                                        arr.push(template);
+                                        updateField(sectionKey, fieldKey, arr);
+                                      }}
+                                        className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 mt-1">
+                                        <Plus className="w-3 h-3" /> Add {fieldKey.slice(0, -1)}
+                                      </button>
+                                    </div>
+                                  );
+                                } else {
+                                  // Array of strings
+                                  return (
+                                    <div key={fieldKey}>
+                                      <label className="block text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">
+                                        {fieldKey.replace(/([A-Z])/g, ' $1').trim()}
+                                      </label>
+                                      {(fieldValue as string[]).map((item: string, idx: number) => (
+                                        <div key={idx} className="flex items-center gap-2 mb-2">
+                                          <input
+                                            type="text"
+                                            value={item}
+                                            onChange={(e) => {
+                                              const arr = [...((content[sectionKey] || {})[fieldKey] || [])];
+                                              arr[idx] = e.target.value;
+                                              updateField(sectionKey, fieldKey, arr);
+                                            }}
+                                            className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                                          />
+                                          <button onClick={() => {
+                                            const arr = [...((content[sectionKey] || {})[fieldKey] || [])];
+                                            arr.splice(idx, 1);
+                                            updateField(sectionKey, fieldKey, arr);
+                                          }} className="p-1 rounded text-slate-400 hover:text-red-600"><Trash2 className="w-3 h-3" /></button>
+                                        </div>
+                                      ))}
+                                      <button onClick={() => {
+                                        const arr = [...((content[sectionKey] || {})[fieldKey] || []), ''];
+                                        updateField(sectionKey, fieldKey, arr);
+                                      }}
+                                        className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 mt-1">
+                                        <Plus className="w-3 h-3" /> Add Item
+                                      </button>
+                                    </div>
+                                  );
+                                }
+                              } else if (typeof fieldValue === 'object' && fieldValue !== null) {
+                                // Nested object (e.g., form, gst, incomeTax, values, team, quickLinks)
+                                return (
+                                  <div key={fieldKey}>
+                                    <label className="block text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">
+                                      {fieldKey.replace(/([A-Z])/g, ' $1').trim()}
+                                    </label>
+                                    <div className="bg-slate-50 rounded-lg p-3 space-y-3">
+                                      {Object.entries(fieldValue as Record<string, any>).map(([nestedKey, nestedValue]) => {
+                                        if (Array.isArray(nestedValue)) {
+                                          // Array within nested object (e.g., values.items)
+                                          return (
+                                            <div key={nestedKey}>
+                                              <label className="block text-xs font-medium text-slate-400 mb-1 uppercase tracking-wider">
+                                                {nestedKey.replace(/([A-Z])/g, ' $1').trim()}
+                                              </label>
+                                              {(nestedValue as any[]).map((item: any, idx: number) => (
+                                                <div key={idx} className="bg-white rounded-lg p-2 mb-2 space-y-2 border border-slate-100">
+                                                  <div className="flex items-center justify-between">
+                                                    <span className="text-[10px] font-semibold text-slate-400">Item {idx + 1}</span>
+                                                    <button onClick={() => {
+                                                      const parent = { ...((content[sectionKey] || {})[fieldKey] || {}) };
+                                                      const arr = [...((parent[nestedKey] as any[]) || [])];
+                                                      arr.splice(idx, 1);
+                                                      updateField(sectionKey, fieldKey, { ...parent, [nestedKey]: arr });
+                                                    }} className="p-0.5 rounded text-slate-400 hover:text-red-600"><Trash2 className="w-3 h-3" /></button>
+                                                  </div>
+                                                  {Object.entries(item).map(([k, v]) => (
+                                                    <div key={k}>
+                                                      <Input
+                                                        label={k.replace(/([A-Z])/g, ' $1').trim()}
+                                                        value={String(v || '')}
+                                                        onChange={(newVal) => {
+                                                          const parent = { ...((content[sectionKey] || {})[fieldKey] || {}) };
+                                                          const arr = [...((parent[nestedKey] as any[]) || [])];
+                                                          arr[idx] = { ...arr[idx], [k]: newVal };
+                                                          updateField(sectionKey, fieldKey, { ...parent, [nestedKey]: arr });
+                                                        }}
+                                                        multiline={typeof v === 'string' && v.length > 80}
+                                                        rows={3}
+                                                      />
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              ))}
+                                              <button onClick={() => {
+                                                const parent = { ...((content[sectionKey] || {})[fieldKey] || {}) };
+                                                const arr = [...((parent[nestedKey] as any[]) || [])];
+                                                const template = (nestedValue as any[]).length > 0
+                                                  ? Object.fromEntries(Object.entries((nestedValue as any[])[0]).map(([k]) => [k, '']))
+                                                  : {};
+                                                arr.push(template);
+                                                updateField(sectionKey, fieldKey, { ...parent, [nestedKey]: arr });
+                                              }}
+                                                className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 mt-1">
+                                                <Plus className="w-3 h-3" /> Add {nestedKey.slice(0, -1)}
+                                              </button>
+                                            </div>
+                                          );
+                                        } else {
+                                          return (
+                                            <Input
+                                              key={nestedKey}
+                                              label={nestedKey.replace(/([A-Z])/g, ' $1').trim()}
+                                              value={String(nestedValue || '')}
+                                              onChange={(newVal) => updateNested(sectionKey, fieldKey, nestedKey, newVal)}
+                                              multiline={typeof nestedValue === 'string' && nestedValue.length > 80}
+                                              rows={3}
+                                            />
+                                          );
+                                        }
+                                      })}
+                                    </div>
+                                  </div>
+                                );
+                              } else {
+                                // Simple string value
+                                const strVal = String(fieldValue || '');
+                                return (
+                                  <Input
+                                    key={fieldKey}
+                                    label={fieldKey.replace(/([A-Z])/g, ' $1').trim()}
+                                    value={strVal}
+                                    onChange={(v) => updateField(sectionKey, fieldKey, v)}
+                                    multiline={strVal.length > 80}
+                                    rows={3}
+                                  />
+                                );
+                              }
+                            })
+                          : (
+                            <div className="text-sm text-slate-400 py-4 text-center">No data in this section</div>
+                          )
+                        }
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
           {/* ========= HERO TAB ========= */}
           {activeTab === "hero" && (
             <>
@@ -535,6 +751,35 @@ export default function AdminContent() {
                   ))}
                 </div>
               </div>
+              <div className="border-t border-slate-100 pt-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">Plan Features (default list)</h3>
+                {((content.pricing || {}).defaultFeatures || []).map((feature: string, i: number) => (
+                  <div key={i} className="flex items-center gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={feature}
+                      onChange={(e) => {
+                        const features = [...((content.pricing || {}).defaultFeatures || [])];
+                        features[i] = e.target.value;
+                        updateField("pricing", "defaultFeatures", features);
+                      }}
+                      className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                    />
+                    <button onClick={() => {
+                      const features = [...((content.pricing || {}).defaultFeatures || [])];
+                      features.splice(i, 1);
+                      updateField("pricing", "defaultFeatures", features);
+                    }} className="p-1.5 rounded text-slate-400 hover:text-red-600"><Trash2 className="w-3.5 h-3.5" /></button>
+                  </div>
+                ))}
+                <button onClick={() => {
+                  const features = [...((content.pricing || {}).defaultFeatures || []), "New feature"];
+                  updateField("pricing", "defaultFeatures", features);
+                }}
+                  className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700">
+                  <Plus className="w-3.5 h-3.5" /> Add Feature
+                </button>
+              </div>
             </>
           )}
 
@@ -563,15 +808,52 @@ export default function AdminContent() {
 
           {/* ========= FAQ TAB ========= */}
           {activeTab === "faq" && (
-            <div className="grid sm:grid-cols-2 gap-4">
-              {["badge", "title", "subtitle", "searchPlaceholder", "noResults"].map((key) => (
-                <div key={key} className={["subtitle"].includes(key) ? "sm:col-span-2" : ""}>
-                  <Input label={key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase())}
-                    value={(content.faq || {})[key] || ""}
-                    onChange={(v) => updateField("faq", key, v)} multiline={["subtitle"].includes(key)} />
-                </div>
-              ))}
-            </div>
+            <>
+              <h3 className="text-sm font-semibold text-slate-700 mb-4">Section Headers</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {["badge", "title", "subtitle", "searchPlaceholder", "noResults"].map((key) => (
+                  <div key={key} className={["subtitle"].includes(key) ? "sm:col-span-2" : ""}>
+                    <Input label={key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase())}
+                      value={(content.faq || {})[key] || ""}
+                      onChange={(v) => updateField("faq", key, v)} multiline={["subtitle"].includes(key)} />
+                  </div>
+                ))}
+              </div>
+              <div className="border-t border-slate-100 pt-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">FAQ Items (Questions & Answers)</h3>
+                {((content.faq || {}).items || []).map((item: any, i: number) => (
+                  <div key={i} className="bg-slate-50 rounded-xl p-4 mb-3 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-500">Question {i + 1}</span>
+                      <button onClick={() => {
+                        const items = [...((content.faq || {}).items || [])];
+                        items.splice(i, 1);
+                        updateField("faq", "items", items);
+                      }} className="p-1 rounded text-slate-400 hover:text-red-600"><Trash2 className="w-3.5 h-3.5" /></button>
+                    </div>
+                    <Input label="Question" value={item.question || ""}
+                      onChange={(v) => {
+                        const items = [...((content.faq || {}).items || [])];
+                        items[i] = { ...items[i], question: v };
+                        updateField("faq", "items", items);
+                      }} />
+                    <Input label="Answer" value={item.answer || ""}
+                      onChange={(v) => {
+                        const items = [...((content.faq || {}).items || [])];
+                        items[i] = { ...items[i], answer: v };
+                        updateField("faq", "items", items);
+                      }} multiline rows={3} />
+                  </div>
+                ))}
+                <button onClick={() => {
+                  const items = [...((content.faq || {}).items || []), { question: "New Question?", answer: "Answer here." }];
+                  updateField("faq", "items", items);
+                }}
+                  className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700">
+                  <Plus className="w-3.5 h-3.5" /> Add Question
+                </button>
+              </div>
+            </>
           )}
 
           {/* ========= CONTACT TAB ========= */}
