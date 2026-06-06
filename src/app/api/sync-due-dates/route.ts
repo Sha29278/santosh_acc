@@ -36,11 +36,13 @@ export async function GET() {
     }
 
     // Persist to due-dates.json so the rest of the app can read it
-    await writeJSON("due-dates.json", items);
+    const saved = await writeJSON("due-dates.json", items);
 
     return NextResponse.json({
-      success: true,
-      message: `Synced ${items.length} due dates (${activeOverrides.length} overrides applied) for FY ${getFinancialYear()}`,
+      success: saved,
+      message: saved
+        ? `Synced ${items.length} due dates (${activeOverrides.length} overrides applied) for FY ${getFinancialYear()}`
+        : `Generated ${items.length} due dates but failed to persist — GitHub save failed. Check your GITHUB_TOKEN.`,
       count: items.length,
       overridesApplied: activeOverrides.length,
       syncedAt: new Date().toISOString(),

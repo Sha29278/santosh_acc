@@ -256,7 +256,10 @@ export async function PUT(request: Request) {
   }
   try {
     const body = await request.json();
-    await writeJSON("site-content.json", body);
+    const saved = await writeJSON("site-content.json", body);
+    if (!saved) {
+      return NextResponse.json({ error: "Content was not persisted — GitHub save failed. Check your GITHUB_TOKEN." }, { status: 500 });
+    }
     return NextResponse.json({ success: true, message: "Content saved successfully!" });
   } catch {
     return NextResponse.json({ error: "Failed to save content" }, { status: 500 });

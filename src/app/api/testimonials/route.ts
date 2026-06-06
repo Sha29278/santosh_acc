@@ -22,7 +22,10 @@ export async function PUT(request: Request) {
     if (!Array.isArray(body)) {
       return NextResponse.json({ error: "Invalid data format" }, { status: 400 });
     }
-    await writeJSON("testimonials.json", body);
+    const saved = await writeJSON("testimonials.json", body);
+    if (!saved) {
+      return NextResponse.json({ error: "Testimonials were not persisted — GitHub save failed. Check your GITHUB_TOKEN." }, { status: 500 });
+    }
     return NextResponse.json({ success: true, message: "Testimonials saved successfully!" });
   } catch {
     return NextResponse.json({ error: "Failed to save testimonials" }, { status: 500 });

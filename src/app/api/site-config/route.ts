@@ -74,7 +74,10 @@ export async function PUT(request: Request) {
       logoUrl: body.logoUrl !== undefined ? body.logoUrl : (current.logoUrl || ""),
     };
 
-    await writeJSON("site-config.json", updated);
+    const saved = await writeJSON("site-config.json", updated);
+    if (!saved) {
+      return NextResponse.json({ error: "Settings were not persisted — GitHub save failed. Check your GITHUB_TOKEN." }, { status: 500 });
+    }
     return NextResponse.json({ success: true, message: "Settings saved successfully!" });
   } catch {
     return NextResponse.json({ error: "Failed to save settings" }, { status: 500 });

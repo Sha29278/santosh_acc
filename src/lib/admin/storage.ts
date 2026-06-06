@@ -99,17 +99,18 @@ export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
 }
 
 /**
- * Write JSON data to cache + filesystem (local dev) + commit to GitHub.
- * Cache ensures subsequent reads return the latest data immediately,
- * even on Vercel where filesystem is read-only and deploy takes ~60s.
+ * Write JSON data to filesystem (local dev) + commit to GitHub.
+ * Returns true if the data was committed to GitHub, false otherwise.
+ * On Vercel the filesystem write silently fails, so the GitHub
+ * commit is the only way data persists.
  */
-export async function writeJSON<T>(filename: string, data: T): Promise<void> {
+export async function writeJSON<T>(filename: string, data: T): Promise<boolean> {
   const content = JSON.stringify(data, null, 2);
 
   // 1. Write to filesystem (works locally, silently fails on Vercel)
   safeWriteFileSync(filePath(filename), content);
 
-  // 2. Commit to GitHub (triggers Vercel redeploy for all instances)
+  // 2. Commit to GitHub (this is the real persistence on Vercel)
   if (isGitDeployEnabled()) {
     const committed = await commitTextFile(
       `data/${filename}`,
@@ -118,8 +119,13 @@ export async function writeJSON<T>(filename: string, data: T): Promise<void> {
     );
     if (!committed) {
       console.error(`[git-deploy] Failed to commit ${filename} to GitHub — changes may not persist`);
+      return false;
     }
+    return true;
   }
+
+  // Local dev mode — filesystem write is enough
+  return true;
 }
 
 // ---------- File upload (filesystem + git deploy) ----------
