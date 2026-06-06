@@ -2,7 +2,7 @@
   "hero": {
     "trustBadge": "Trusted by businesses across India",
     "title": "Your Trusted",
-    "titleHighlight": "Tax & GST",
+    "titleHighlight": "TEST-LIVE-UPDATE-456",
     "subtitle": "From GST registration to income tax filing, we handle all your compliance needs with expertise, accuracy, and care.",
     "ctaPrimary": "File Now",
     "ctaSecondary": "Book Free Consultation",
@@ -80,7 +80,7 @@
         },
         {
           "title": "Expert Leadership",
-          "desc": "Founded by Santosh Sharma � an experienced Accountant with deep expertise in GST, Income Tax, TDS, and financial management."
+          "desc": "Founded by Santosh Sharma ? an experienced Accountant with deep expertise in GST, Income Tax, TDS, and financial management."
         }
       ]
     },
@@ -275,7 +275,7 @@
       "cgstSgstTitle": "Intra-state (Same state)",
       "cgstSgstDesc": "GST is split equally into CGST (Central) and SGST (State). Each gets half of the total GST rate.",
       "igstTitle": "Inter-state (Different states)",
-      "igstDesc": "Full GST rate is applied as IGST (Integrated). No split � the entire tax goes to the central government."
+      "igstDesc": "Full GST rate is applied as IGST (Integrated). No split ? the entire tax goes to the central government."
     },
     "incomeTax": {
       "title": "Income Details",
@@ -350,7 +350,7 @@
     "statusLabel": "Status"
   },
   "common": {
-    "loading": "Loading...",
+    "loading": "TEST-LOADING-456",
     "error": "An error occurred",
     "search": "Search",
     "noResults": "No results found",
