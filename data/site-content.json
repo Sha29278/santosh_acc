@@ -1,8 +1,384 @@
 {
   "hero": {
-    "ctaPrimary": "E2E-TEST-CLEANUP"
+    "trustBadge": "Trusted by businesses across India",
+    "title": "Your Trusted",
+    "titleHighlight": "Tax & GST",
+    "subtitle": "From GST registration to income tax filing, we handle all your compliance needs with expertise, accuracy, and care.",
+    "ctaPrimary": "File Now",
+    "ctaSecondary": "Book Free Consultation",
+    "statYears": "13+",
+    "statYearsLabel": "Years Experience",
+    "statClients": "100+",
+    "statClientsLabel": "Trusted Customers",
+    "statAccuracy": "99.9%",
+    "statAccuracyLabel": "Filing Accuracy",
+    "description": "Expert guidance on GST registration, filing, and compliance.",
+    "cta": "Get Free Consultation"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "taxCalculator": "GST Calculator",
+    "incomeTaxCalculator": "Income Tax Calculator",
+    "pricing": "Pricing",
+    "blog": "Blog",
+    "contact": "Contact",
+    "bookConsultation": "Book Consultation",
+    "phone": "+91 9613461462"
+  },
+  "footer": {
+    "tagline": "Your Trusted Tax Partner",
+    "services": "Services",
+    "company": "Company",
+    "support": "Support",
+    "followUs": "Follow Us",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "allRightsReserved": "All rights reserved.",
+    "quickLinks": {
+      "services": {
+        "gstRegistration": "GST Registration",
+        "incomeTax": "Income Tax Filing",
+        "tdsReturn": "TDS Return Filing",
+        "companyRegistration": "Company Registration",
+        "msmeRegistration": "MSME Registration"
+      },
+      "company": {
+        "aboutUs": "About Us",
+        "services": "Services",
+        "pricing": "Pricing",
+        "blog": "Blog",
+        "contactUs": "Contact Us"
+      },
+      "support": {
+        "privacyPolicy": "Privacy Policy",
+        "terms": "Terms & Conditions",
+        "faq": "FAQ"
+      }
+    },
+    "copyright": "? 2025 AccTax Solutions"
+  },
+  "about": {
+    "badge": "About Us",
+    "title": "Leading Tax Consultancy",
+    "titleHighlight": "Indian Businesses",
+    "subtitle": "Founded by Santosh Sharma, we bring 13+ years of hands-on accounting and taxation expertise to simplify compliance for businesses of all sizes.",
+    "mission": "Founded by Santosh Sharma, a seasoned accountant with 13+ years of experience across education, manufacturing, and consulting sectors, AccTax Solutions is built on a foundation of expertise and trust. Holding a B.Com in Accounting & Finance from Dibrugarh University, Santosh has managed complex financial operations at institutions like Kaziranga University, Electrokings India, and S.K Kalani and Company. Our mission is to make tax filing and compliance simple, accurate, and stress-free for every business owner and professional in India.",
+    "values": {
+      "title": "Our Core Values",
+      "subtitle": "These principles guide everything we do.",
+      "items": [
+        {
+          "title": "Trust & Integrity",
+          "desc": "We believe in transparent dealings and maintaining the highest ethical standards in all our services."
+        },
+        {
+          "title": "Accuracy First",
+          "desc": "Every filing is double-checked to ensure 99%+ accuracy, protecting you from penalties and notices."
+        },
+        {
+          "title": "Client Focus",
+          "desc": "Your financial well-being is our priority. We tailor solutions to your unique business needs."
+        },
+        {
+          "title": "Expert Leadership",
+          "desc": "Founded by Santosh Sharma � an experienced Accountant with deep expertise in GST, Income Tax, TDS, and financial management."
+        }
+      ]
+    },
+    "team": {
+      "badge": "Our Team",
+      "title": "Meet the Experts Behind AccTax Solutions",
+      "subtitle": "A dedicated team of qualified professionals committed to your success.",
+      "highlights": [
+        {
+          "number": "13+",
+          "label": "Years Experience"
+        },
+        {
+          "number": "100+",
+          "label": "Trusted Customers"
+        },
+        {
+          "number": "B.Com",
+          "label": "Accounting & Finance"
+        },
+        {
+          "number": "Expert",
+          "label": "GST & Tax Specialist"
+        }
+      ]
+    },
+    "description": "Expert services"
+  },
+  "whyChooseUs": {
+    "badge": "Why AccTax Solutions",
+    "title": "Why Businesses Trust Us",
+    "subtitle": "We combine expertise with technology to deliver exceptional tax and compliance services.",
+    "items": [
+      {
+        "title": "13+ Years Experience",
+        "description": "Over 13 years of excellence in taxation, accounting, and compliance services across India.",
+        "stat": "13+",
+        "suffix": "Years"
+      },
+      {
+        "title": "100+ Trusted Customers",
+        "description": "Trusted by over 100 businesses and individuals for reliable taxation and compliance services.",
+        "stat": "100+",
+        "suffix": "Trusted Customers"
+      },
+      {
+        "title": "99% Filing Accuracy",
+        "description": "Industry-leading accuracy rate with zero-error compliance guarantees.",
+        "stat": "99%",
+        "suffix": "Accuracy"
+      },
+      {
+        "title": "Secure Data Protection",
+        "description": "Bank-grade encryption and data protection for all your confidential documents.",
+        "stat": "100%",
+        "suffix": "Secure"
+      }
+    ]
+  },
+  "process": {
+    "badge": "How It Works",
+    "title": "Simple 5-Step Process",
+    "subtitle": "Getting started with AccTax Solutions is easy. Follow these simple steps to complete your tax filing.",
+    "steps": [
+      {
+        "title": "Register",
+        "description": "Sign up and share your basic business details with our team."
+      },
+      {
+        "title": "Upload Documents",
+        "description": "Upload required documents securely through our portal."
+      },
+      {
+        "title": "Verification",
+        "description": "Our experts verify documents and process your application."
+      },
+      {
+        "title": "Filing",
+        "description": "We prepare and file your returns with accuracy and care."
+      },
+      {
+        "title": "Confirmation",
+        "description": "Receive confirmation and track your filing status anytime."
+      }
+    ]
+  },
+  "pricing": {
+    "badge": "Pricing",
+    "title": "Transparent Pricing Plans",
+    "subtitle": "Choose the plan that fits your business needs. No hidden fees, no surprises.",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yourIncome": "Your Monthly Turnover",
+    "enterIncome": "Enter your monthly turnover...",
+    "recommended": "We recommend the",
+    "mostPopular": "?? Most Popular",
+    "getStarted": "Get Started",
+    "incomeTag": "Turnover",
+    "comparePlans": "Compare Plans Side by Side",
+    "compareSubtitle": "See exactly what's included in each plan.",
+    "feature": "Feature",
+    "customPlan": "Need a Custom Plan?",
+    "customSubtitle": "We offer tailored solutions for large enterprises with specific requirements.",
+    "contactTeam": "Contact Our Team",
+    "defaultFeatures": [
+      "GST Registration Assistance",
+      "Monthly GST Return Filing (GSTR-3B)",
+      "Basic Tax Consultation",
+      "Email Support",
+      "Document Upload Portal"
+    ]
+  },
+  "blog": {
+    "badge": "Our Blog",
+    "title": "Latest Tax & Compliance Insights",
+    "subtitle": "Stay updated with the latest tax news, compliance tips, and expert advice from our team.",
+    "searchPlaceholder": "Search articles...",
+    "readMore": "Read More",
+    "viewAll": "View All Articles",
+    "noArticles": "No articles found",
+    "noArticlesHint": "Try adjusting your search or filter.",
+    "latestInsights": "Latest Articles & Insights",
+    "insightsSubtitle": "Stay informed with expert analysis on tax laws, compliance updates, and business strategies."
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Frequently Asked Questions",
+    "subtitle": "Got questions? We've got answers. Can't find what you're looking for? Contact our support team.",
+    "searchPlaceholder": "Search FAQs...",
+    "noResults": "No FAQs found matching your search."
+  },
+  "contact": {
+    "badge": "Get in Touch",
+    "title": "Let's Talk About Your Tax Needs",
+    "subtitle": "Whether you have a question about GST, income tax, or any other compliance matter, our team is ready to help.",
+    "form": {
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "serviceNeeded": "Service Needed",
+      "selectService": "Select a service...",
+      "message": "Message",
+      "sendMessage": "Send Message",
+      "thankYou": "Thank You! ??",
+      "thankYouMessage": "We'll get back to you within 24 hours."
+    },
+    "callUs": "Call Us",
+    "emailUs": "Email Us",
+    "visitUs": "Visit Us",
+    "workingHours": "Mon-Sat, 9 AM - 7 PM",
+    "replyTime": "We reply within 24 hours",
+    "byAppointment": "By appointment only",
+    "getDirections": "Get Directions",
+    "quickChat": "Quick Chat on WhatsApp",
+    "quickChatDesc": "Get instant answers to your queries",
+    "chatOnWhatsApp": "Chat on WhatsApp"
+  },
+  "taxCalculator": {
+    "badge": "Tax Calculator",
+    "title": "Calculate Your Taxes",
+    "titleHighlight": "Instantly",
+    "subtitle": "Compute GST amounts or estimate your income tax under both old and new tax regimes as per the Indian Income Tax Act.",
+    "gstTab": "GST Calculator",
+    "incomeTaxTab": "Income Tax Calculator",
+    "gst": {
+      "title": "Enter Details",
+      "enterDetails": "Enter Details",
+      "amount": "Amount (?)",
+      "enterAmount": "Enter amount",
+      "gstRate": "GST Rate",
+      "taxType": "Tax Type",
+      "exclusive": "Exclusive",
+      "inclusive": "Inclusive",
+      "exclusiveHint": "GST is added to the amount",
+      "inclusiveHint": "Amount already includes GST",
+      "transactionType": "Transaction Type",
+      "intraState": "Intra-state",
+      "interState": "Inter-state",
+      "intraStateHint": "Same state ? CGST + SGST",
+      "interStateHint": "Different states ? IGST",
+      "calculate": "Calculate GST",
+      "noResults": "No results yet",
+      "noResultsHint": "Enter an amount and calculate GST",
+      "totalAmount": "Total Amount",
+      "taxableValue": "Taxable Value",
+      "totalGst": "Total GST",
+      "grandTotal": "Grand Total",
+      "copyResult": "?? Copy Result",
+      "copied": "? Copied!",
+      "understandingGst": "Understanding GST",
+      "gstHowTitle": "How GST is Calculated in India",
+      "gstHowSubtitle": "A quick overview of GST rates and tax components.",
+      "cgstSgstTitle": "Intra-state (Same state)",
+      "cgstSgstDesc": "GST is split equally into CGST (Central) and SGST (State). Each gets half of the total GST rate.",
+      "igstTitle": "Inter-state (Different states)",
+      "igstDesc": "Full GST rate is applied as IGST (Integrated). No split � the entire tax goes to the central government."
+    },
+    "incomeTax": {
+      "title": "Income Details",
+      "incomeDetails": "Income Details",
+      "annualIncome": "Monthly Turnover (?)",
+      "enterIncome": "Enter your monthly turnover",
+      "taxRegime": "Tax Regime",
+      "newRegime": "New Regime",
+      "oldRegime": "Old Regime",
+      "newRegimeHint": "Lower tax rates, minimal deductions (only Std. Deduction)",
+      "oldRegimeHint": "Higher tax rates, but claim deductions (80C, 80D, HRA, etc.)",
+      "deductions": "Deductions (Old Regime)",
+      "calculate": "Calculate Income Tax",
+      "noResults": "No results yet",
+      "noResultsHint": "Enter your income and calculate tax",
+      "totalTaxPayable": "Total Tax Payable",
+      "effectiveRate": "Effective Rate",
+      "grossIncome": "Monthly Turnover",
+      "standardDeduction": "Standard Deduction",
+      "otherDeductions": "Other Deductions",
+      "taxableIncome": "Taxable Income",
+      "slabCalculation": "Slab-wise Calculation",
+      "taxBeforeRebate": "Tax Before Rebate",
+      "rebate": "Section 87A Rebate",
+      "taxAfterRebate": "Tax After Rebate",
+      "cess": "Health & Education Cess (4%)"
+    }
+  },
+  "complianceCalendar": {
+    "badge": "Compliance Calendar",
+    "title": "Upcoming Tax Due Dates",
+    "subtitle": "Never miss a deadline. Stay on top of your GST and Income Tax compliance with our synced calendar.",
+    "sync": "Sync Now",
+    "syncing": "Syncing...",
+    "lastSynced": "Last synced:",
+    "total": "Total Deadlines",
+    "overdue": "Overdue",
+    "dueThisWeek": "Due This Week",
+    "dueThisMonth": "Due This Month",
+    "allDates": "All Dates",
+    "gst": "GST",
+    "incomeTax": "Income Tax",
+    "noDates": "No upcoming due dates",
+    "showAll": "Show All",
+    "showLess": "Show Less",
+    "getReminders": "Get Deadline Reminders via Email",
+    "getRemindersDesc": "We'll notify you 7 days and 1 day before each deadline. No spam, unsubscribe anytime.",
+    "subscribe": "Subscribe",
+    "remindersActive": "Reminders active for",
+    "unsubscribe": "Unsubscribe",
+    "fileNow": "File Now",
+    "close": "Close",
+    "setReminder": "Set Reminder for This Deadline",
+    "reminderSet": "Reminder Set",
+    "removeReminder": "Remove reminder",
+    "dueToday": "Due Today",
+    "daysLeft": "d left",
+    "overdue_label": "Overdue",
+    "gstTitle": "GST Due Dates",
+    "gstSubtitle": "Goods & Services Tax",
+    "incomeTaxTitle": "Income Tax Calendar",
+    "incomeTaxSubtitle": "Income Tax Act, 1961",
+    "viewAllGst": "View all GST dates",
+    "viewAllIt": "View all Income Tax dates",
+    "addDatesHint": "Add due dates from the admin panel",
+    "upcomingCount": "{count} upcoming",
+    "dataSourcedFrom": "Data sourced from:",
+    "timeRemaining": "Time Remaining",
+    "dueDateLabel": "Due Date",
+    "categoryLabel": "Category",
+    "formLabel": "Form",
+    "statusLabel": "Status"
   },
   "common": {
-    "loading": "E2E-TEST-CLEANUP"
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "search": "Search",
+    "noResults": "No results found",
+    "viewAll": "View All",
+    "readMore": "Read More",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "June 1, 2026",
+    "content": "At AccTax Solutions, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.\n\n1. Information We Collect\nWe may collect personal identification information (Name, Email Address, Phone Number, PAN, GSTIN) when you voluntarily submit forms on our website or engage our services. We also collect non-personal data such as browser type, device information, and website usage statistics through cookies and analytics tools.\n\n2. How We Use Your Information\nWe use the collected information to provide and improve our tax filing and compliance services, communicate with you regarding your inquiries or filings, send periodic emails regarding updates, offers, and tax-related news, comply with legal obligations and regulatory requirements.\n\n3. Data Protection & Security\nWe implement industry-standard security measures including SSL encryption, secure servers, and restricted data access to protect your personal information. However, no method of transmission over the Internet is 100% secure.\n\n4. Sharing Your Information\nWe do not sell, trade, or rent your personal information to third parties. We may share information with trusted service providers who assist us in operating our website and services, provided they agree to keep your information confidential, or when required by law.\n\n5. Cookies\nOur website uses cookies to enhance user experience. You can choose to disable cookies through your browser settings, though this may affect some functionality.\n\n6. Your Rights\nYou have the right to request access to, correction of, or deletion of your personal data held by us. To exercise these rights, please contact us at info@acctaxsolutions.in.\n\n7. Third-Party Links\nOur website may contain links to third-party sites. We are not responsible for the privacy practices of these external sites.\n\n8. Changes to This Policy\nWe reserve the right to update this Privacy Policy at any time. Changes will be posted on this page with an updated revision date.\n\n9. Contact Us\nIf you have questions about this Privacy Policy, please contact us at:\nAccTax Solutions\nFancy Ali, Jorhat, Assam - 785001\nEmail: info@acctaxsolutions.in\nPhone: +91 9613461462"
+  },
+  "terms": {
+    "title": "Terms",
+    "lastUpdated": "June 1, 2026",
+    "content": "Welcome to AccTax Solutions. By accessing our website or using our services, you agree to be bound by the following Terms & Conditions.\n\n1. Acceptance of Terms\nBy using our website and services, you acknowledge that you have read, understood, and agree to be bound by these Terms & Conditions. If you do not agree, please do not use our services.\n\n2. Services Description\nAccTax Solutions provides taxation, accounting, compliance, and business registration services. We strive to ensure accuracy in all filings but recommend clients review documents before submission.\n\n3. Client Responsibilities\nYou agree to provide accurate, complete, and timely information required for the provision of our services. You are responsible for the accuracy of the information you provide. AccTax Solutions is not liable for penalties arising from incorrect information provided by you.\n\n4. Fees & Payment\nService fees are as per the agreed pricing plan. All fees are non-refundable unless otherwise stated. We reserve the right to modify our pricing with prior notice.\n\n5. Limitation of Liability\nAccTax Solutions shall not be liable for any indirect, incidental, special, or consequential damages arising from the use of our services, including but not limited to tax penalties resulting from delayed information provided by the client or changes in tax laws.\n\n6. Intellectual Property\nAll content on our website, including text, graphics, logos, and software, is the property of AccTax Solutions and is protected by applicable intellectual property laws.\n\n7. Termination\nWe reserve the right to terminate or suspend services if you breach these terms or if we are unable to verify the information provided.\n\n8. Governing Law\nThese Terms & Conditions are governed by the laws of India. Any disputes shall be subject to the jurisdiction of the courts in Jorhat, Assam.\n\n9. Changes to Terms\nWe may update these Terms & Conditions at any time. Continued use of our services after changes constitutes acceptance of the new terms.\n\n10. Contact\nFor questions regarding these terms, contact us at:\nAccTax Solutions\nFancy Ali, Jorhat, Assam - 785001\nEmail: info@acctaxsolutions.in\nPhone: +91 9613461462"
   }
 }
