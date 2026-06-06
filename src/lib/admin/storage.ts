@@ -7,14 +7,15 @@ const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 
 // ---------- Data consistency strategy ----------
 //
-// readJSON  → Always reads from the deployed filesystem (consistent
-//              across all Vercel instances). No in-memory cache.
+// readJSON  → Tries GitHub API Contents endpoint first (returns
+//              latest committed data without CDN caching). Falls
+//              back to the deployed filesystem, then defaults.
 // writeJSON → Writes to filesystem (local) + commits to GitHub.
 //             The admin panel's client-cache.ts handles the admin's
 //             own immediate read-after-write via localStorage.
 //
-// After the git commit, Vercel auto-deploys (~30-60s) and all
-// instances serve the same updated data — no yo-yo effect.
+// Data is available immediately after the GitHub commit finishes,
+// no need to wait for Vercel redeploy (~30-60s).
 
 // ---------- helpers ----------
 
@@ -51,15 +52,43 @@ function safeUnlinkSync(filepath: string): boolean {
   }
 }
 
-// ---------- JSON data (filesystem + cache + git deploy) ----------
+// ---------- JSON data (filesystem + GitHub raw + git deploy) ----------
 
 /**
- * Read JSON data — reads directly from the deployed filesystem.
- * Skips the in-memory cache entirely to ensure consistent data
- * across all Vercel serverless instances (no yo-yo effect).
- * Falls back to default if file doesn't exist.
+ * Read JSON data — tries GitHub raw URL first (always latest),
+ * falls back to the deployed filesystem, then defaults.
+ *
+ * On Vercel the filesystem only has data from the last deploy.
+ * GitHub raw gives us the latest committed data immediately
+ * without waiting for a Vercel redeploy.
  */
 export async function readJSON<T>(filename: string, fallback: T): Promise<T> {
+  // 1. Try GitHub API first (always returns latest committed data, no CDN caching)
+  const repo = process.env.GITHUB_REPO;
+  const token = process.env.GITHUB_TOKEN;
+  if (repo && token) {
+    try {
+      const url = `https://api.github.com/repos/${repo}/contents/data/${filename}`;
+      const res = await fetch(url, {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "acctax-solutions",
+        },
+      });
+      if (res.ok) {
+        const body = await res.json();
+        const jsonStr = Buffer.from(body.content, "base64").toString("utf-8");
+        return JSON.parse(jsonStr) as T;
+      }
+      console.warn(`[storage] GitHub API returned ${res.status} for ${filename} — falling back to filesystem`);
+    } catch (e) {
+      console.warn(`[storage] GitHub API fetch failed for ${filename}: ${e} — falling back to filesystem`);
+    }
+  }
+
+  // 2. Fall back to filesystem (works locally, may be stale on Vercel)
   try {
     const fp = filePath(filename);
     if (!fs.existsSync(fp)) return fallback;
