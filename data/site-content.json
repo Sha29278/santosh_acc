@@ -2,7 +2,7 @@
   "hero": {
     "trustBadge": "Trusted by businesses across India",
     "title": "Your Trusted",
-    "titleHighlight": "TEST-LIVE-UPDATE-456",
+    "titleHighlight": "Tax & GST",
     "subtitle": "From GST registration to income tax filing, we handle all your compliance needs with expertise, accuracy, and care.",
     "ctaPrimary": "File Now",
     "ctaSecondary": "Book Free Consultation",
@@ -350,7 +350,7 @@
     "statusLabel": "Status"
   },
   "common": {
-    "loading": "TEST-LOADING-456",
+    "loading": "Loading...",
     "error": "An error occurred",
     "search": "Search",
     "noResults": "No results found",
