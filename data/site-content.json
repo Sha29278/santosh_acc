@@ -1,8 +1,8 @@
 {
   "hero": {
-    "titleHighlight": "TEST-E2E-ADMIN-123"
+    "titleHighlight": "Tax & GST"
   },
   "common": {
-    "loading": "TEST-E2E-LOADING-123"
+    "loading": "Loading..."
   }
 }
