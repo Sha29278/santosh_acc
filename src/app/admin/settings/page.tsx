@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Save, Eye, EyeOff, Upload, Trash2, Activity, RefreshCw, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { Save, Eye, EyeOff, Upload, Trash2 } from "lucide-react";
 import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
 interface SiteConfig {
@@ -15,12 +15,6 @@ interface SiteConfig {
   contactPhone: string;
   address: string;
   logoUrl?: string;
-}
-
-interface HealthData {
-  githubToken: { status: string; message: string; user?: string };
-  lastCommit: { exists: boolean; message?: string; date?: string; sha?: string };
-  overall: string;
 }
 
 const MASKED_PASSWORD = "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"; // matches API
@@ -45,24 +39,6 @@ export default function AdminSettings() {
     logoUrl: "",
   });
 
-  // Health check state
-  const [health, setHealth] = useState<HealthData | null>(null);
-  const [healthLoading, setHealthLoading] = useState(false);
-  const [healthError, setHealthError] = useState("");
-
-  const checkHealth = async () => {
-    setHealthLoading(true);
-    setHealthError("");
-    try {
-      const res = await fetch("/api/health");
-      const data = await res.json();
-      setHealth(data);
-    } catch {
-      setHealthError("Failed to check system health");
-    }
-    setHealthLoading(false);
-  };
-
   useEffect(() => {
     const cached = loadCache<SiteConfig>("site-config");
     if (cached && cached.siteName) {
@@ -79,7 +55,6 @@ export default function AdminSettings() {
       })
       .finally(() => {
         setLoading(false);
-        checkHealth();
       });
   }, []);
 
@@ -159,22 +134,12 @@ export default function AdminSettings() {
     return <div className="text-center py-20 text-slate-400">Loading...</div>;
   }
 
-  const StatusBadge = ({ status }: { status: string }) => {
-    if (status === "valid" || status === "healthy" || status === "configured") {
-      return <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full"><CheckCircle className="w-3 h-3" /> Active</span>;
-    }
-    if (status === "expired" || status === "missing" || status === "degraded") {
-      return <span className="inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-50 px-2 py-0.5 rounded-full"><XCircle className="w-3 h-3" /> Issue</span>;
-    }
-    return <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full"><AlertTriangle className="w-3 h-3" /> Unknown</span>;
-  };
-
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Site Settings</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage logo, site identity, contact info, admin credentials, and system health</p>
+          <p className="text-sm text-slate-500 mt-1">Manage logo, site identity, contact info, and admin credentials</p>
         </div>
         <button
           onClick={handleSave}
@@ -382,66 +347,6 @@ export default function AdminSettings() {
           </div>
         </div>
 
-        {/* System Health */}
-        <div className="bg-white rounded-2xl border border-slate-100 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-600" />
-              System Health
-            </h2>
-            <button
-              onClick={checkHealth}
-              disabled={healthLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-all disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${healthLoading ? "animate-spin" : ""}`} />
-              {healthLoading ? "Checking..." : "Check Now"}
-            </button>
-          </div>
-
-          {healthError && (
-            <div className="mb-3 px-3 py-2 bg-red-50 text-red-600 rounded-lg text-xs">{healthError}</div>
-          )}
-
-          {health && (
-            <div className="space-y-3 mb-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                <div className="flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-slate-400" />
-                  <span className="text-sm text-slate-700">GitHub Token</span>
-                </div>
-                <StatusBadge status={health.githubToken.status} />
-              </div>
-              <p className="text-xs text-slate-500 -mt-2">{health.githubToken.message}</p>
-
-              {health.lastCommit.exists && (
-                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-slate-400">{health.lastCommit.sha}</span>
-                    <span className="text-xs text-slate-500 truncate max-w-[180px]">{health.lastCommit.message}</span>
-                  </div>
-                  <span className="text-[10px] text-slate-400">
-                    {health.lastCommit.date ? new Date(health.lastCommit.date).toLocaleDateString() : ""}
-                  </span>
-                </div>
-              )}
-
-
-              <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-100">
-                <span className="text-sm font-medium text-slate-700">Overall Status</span>
-                <StatusBadge status={health.overall} />
-              </div>
-            </div>
-          )}
-
-          {!health && !healthLoading && !healthError && (
-            <div className="text-center py-6 text-slate-400">
-              <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p className="text-xs">Click &quot;Check Now&quot; to run system diagnostics</p>
-            </div>
-          )}
-
-        </div>
       </div>
     </div>
   );
