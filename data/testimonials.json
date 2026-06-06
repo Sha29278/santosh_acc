@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "name": "Test User",
+    "role": "Client",
+    "content": "E2E test testimonial",
+    "rating": 5
+  }
+]
