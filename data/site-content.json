@@ -1,8 +1,8 @@
 {
   "hero": {
-    "titleHighlight": "Tax & GST"
+    "ctaPrimary": "TEST-NO-DEPLOY-789"
   },
   "common": {
-    "loading": "Loading..."
+    "loading": "TEST-NO-DEPLOY-789"
   }
 }
