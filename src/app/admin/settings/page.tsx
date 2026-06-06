@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Save, Eye, EyeOff, Upload, Trash2 } from "lucide-react";
+import { Save, Eye, EyeOff, Upload, Trash2, Activity, RefreshCw, CheckCircle, XCircle, AlertTriangle, Key } from "lucide-react";
 import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
 interface SiteConfig {
@@ -15,6 +15,13 @@ interface SiteConfig {
   contactPhone: string;
   address: string;
   logoUrl?: string;
+}
+
+interface HealthData {
+  githubToken: { status: string; message: string; user?: string };
+  lastCommit: { exists: boolean; message?: string; date?: string; sha?: string };
+  vercel: { configured: boolean; message: string };
+  overall: string;
 }
 
 const MASKED_PASSWORD = "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"; // matches API
@@ -39,15 +46,57 @@ export default function AdminSettings() {
     logoUrl: "",
   });
 
+  // Health check state
+  const [health, setHealth] = useState<HealthData | null>(null);
+  const [healthLoading, setHealthLoading] = useState(false);
+  const [healthError, setHealthError] = useState("");
+  const [newToken, setNewToken] = useState("");
+  const [tokenUpdating, setTokenUpdating] = useState(false);
+  const [tokenResult, setTokenResult] = useState("");
+
+  const checkHealth = async () => {
+    setHealthLoading(true);
+    setHealthError("");
+    try {
+      const res = await fetch("/api/health");
+      const data = await res.json();
+      setHealth(data);
+    } catch {
+      setHealthError("Failed to check system health");
+    }
+    setHealthLoading(false);
+  };
+
+  const handleUpdateToken = async () => {
+    if (!newToken.trim()) return;
+    setTokenUpdating(true);
+    setTokenResult("");
+    try {
+      const res = await fetch("/api/health/update-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: newToken.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTokenResult(`✅ ${data.message}`);
+        setNewToken("");
+        setTimeout(checkHealth, 2000);
+      } else {
+        setTokenResult(`❌ ${data.error || "Failed to update token"}`);
+      }
+    } catch {
+      setTokenResult("❌ Network error — could not update token");
+    }
+    setTokenUpdating(false);
+  };
+
   useEffect(() => {
-    // Load from localStorage cache — user's saved data is always most recent
     const cached = loadCache<SiteConfig>("site-config");
     if (cached && cached.siteName) {
       setConfig(cached);
       setLoading(false);
-      return; // Don't fetch from API — stale server data would overwrite cache
     }
-    // First visit (no cache): fetch from API
     fetch("/api/site-config")
       .then((r) => r.json())
       .then((data) => {
@@ -56,7 +105,10 @@ export default function AdminSettings() {
           saveCache("site-config", data);
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        checkHealth();
+      });
   }, []);
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +143,6 @@ export default function AdminSettings() {
   const handleRemoveLogo = async () => {
     const currentUrl = config.logoUrl;
     if (currentUrl) {
-      // Try to delete the file from the server
       try {
         await fetch("/api/upload", {
           method: "DELETE",
@@ -117,6 +168,9 @@ export default function AdminSettings() {
         saveCache("site-config", config);
         setSuccess(data.message || "Saved! Live on website in ~60 seconds.");
         setTimeout(() => setSuccess(""), 5000);
+      } else {
+        setSuccess(`❌ ${data.error || "Failed to save"}`);
+        setTimeout(() => setSuccess(""), 8000);
       }
     } catch {
       alert("Failed to save settings");
@@ -133,12 +187,22 @@ export default function AdminSettings() {
     return <div className="text-center py-20 text-slate-400">Loading...</div>;
   }
 
+  const StatusBadge = ({ status }: { status: string }) => {
+    if (status === "valid" || status === "healthy" || status === "configured") {
+      return <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full"><CheckCircle className="w-3 h-3" /> Active</span>;
+    }
+    if (status === "expired" || status === "missing" || status === "degraded") {
+      return <span className="inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-50 px-2 py-0.5 rounded-full"><XCircle className="w-3 h-3" /> Issue</span>;
+    }
+    return <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full"><AlertTriangle className="w-3 h-3" /> Unknown</span>;
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Site Settings</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage logo, site identity, contact info, and admin credentials</p>
+          <p className="text-sm text-slate-500 mt-1">Manage logo, site identity, contact info, admin credentials, and system health</p>
         </div>
         <button
           onClick={handleSave}
@@ -151,7 +215,9 @@ export default function AdminSettings() {
       </div>
 
       {success && (
-        <div className="mb-4 px-4 py-3 bg-green-50 text-green-700 rounded-xl text-sm font-medium">
+        <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${
+          success.includes('❌') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
+        }`}>
           {success}
         </div>
       )}
@@ -162,7 +228,6 @@ export default function AdminSettings() {
         <p className="text-sm text-slate-500 mb-4">Upload your company logo — it will appear on the hero section, navbar, and footer.</p>
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 p-4 rounded-xl bg-gradient-to-br from-slate-50 to-blue-50 border border-slate-200">
-          {/* Logo Preview */}
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden shrink-0">
             {config.logoUrl ? (
               /* eslint-disable-next-line @next/next/no-img-element */
@@ -342,6 +407,98 @@ export default function AdminSettings() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* System Health */}
+        <div className="bg-white rounded-2xl border border-slate-100 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+              <Activity className="w-5 h-5 text-blue-600" />
+              System Health
+            </h2>
+            <button
+              onClick={checkHealth}
+              disabled={healthLoading}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-all disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${healthLoading ? "animate-spin" : ""}`} />
+              {healthLoading ? "Checking..." : "Check Now"}
+            </button>
+          </div>
+
+          {healthError && (
+            <div className="mb-3 px-3 py-2 bg-red-50 text-red-600 rounded-lg text-xs">{healthError}</div>
+          )}
+
+          {health && (
+            <div className="space-y-3 mb-4">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                <div className="flex items-center gap-2">
+                  <Key className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm text-slate-700">GitHub Token</span>
+                </div>
+                <StatusBadge status={health.githubToken.status} />
+              </div>
+              <p className="text-xs text-slate-500 -mt-2">{health.githubToken.message}</p>
+
+              {health.lastCommit.exists && (
+                <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-slate-400">{health.lastCommit.sha}</span>
+                    <span className="text-xs text-slate-500 truncate max-w-[180px]">{health.lastCommit.message}</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400">
+                    {health.lastCommit.date ? new Date(health.lastCommit.date).toLocaleDateString() : ""}
+                  </span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                <span className="text-sm text-slate-700">Auto Token Update</span>
+                <StatusBadge status={health.vercel.configured ? "configured" : "missing"} />
+              </div>
+              <p className="text-xs text-slate-500 -mt-2">{health.vercel.message}</p>
+
+              <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-100">
+                <span className="text-sm font-medium text-slate-700">Overall Status</span>
+                <StatusBadge status={health.overall} />
+              </div>
+            </div>
+          )}
+
+          {!health && !healthLoading && !healthError && (
+            <div className="text-center py-6 text-slate-400">
+              <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-xs">Click &quot;Check Now&quot; to run system diagnostics</p>
+            </div>
+          )}
+
+          {/* Update Token Form */}
+          <div className="border-t border-slate-100 pt-4 mt-2">
+            <label className="block text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Update GitHub Token</label>
+            <p className="text-xs text-slate-400 mb-3">If the GitHub token expires, generate a new one at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">github.com/settings/tokens</a> and paste it here.</p>
+            <div className="flex items-center gap-2">
+              <input
+                type="password"
+                placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                value={newToken}
+                onChange={(e) => setNewToken(e.target.value)}
+                className="flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm font-mono"
+              />
+              <button
+                onClick={handleUpdateToken}
+                disabled={tokenUpdating || !newToken.trim()}
+                className="px-3 py-2 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-all disabled:opacity-50 shrink-0"
+              >
+                {tokenUpdating ? "Updating..." : "Update & Test"}
+              </button>
+            </div>
+            {tokenResult && (
+              <div className="mt-2 text-xs font-medium">
+                {tokenResult}
+              </div>
+            )}
           </div>
         </div>
       </div>
