@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Save, Eye, EyeOff, Upload, Trash2, Activity, RefreshCw, CheckCircle, XCircle, AlertTriangle, Key } from "lucide-react";
+import { Save, Eye, EyeOff, Upload, Trash2, Activity, RefreshCw, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 import { loadCache, saveCache } from "@/lib/admin/client-cache";
 
 interface SiteConfig {
@@ -20,7 +20,6 @@ interface SiteConfig {
 interface HealthData {
   githubToken: { status: string; message: string; user?: string };
   lastCommit: { exists: boolean; message?: string; date?: string; sha?: string };
-  vercel: { configured: boolean; message: string };
   overall: string;
 }
 
@@ -50,9 +49,6 @@ export default function AdminSettings() {
   const [health, setHealth] = useState<HealthData | null>(null);
   const [healthLoading, setHealthLoading] = useState(false);
   const [healthError, setHealthError] = useState("");
-  const [newToken, setNewToken] = useState("");
-  const [tokenUpdating, setTokenUpdating] = useState(false);
-  const [tokenResult, setTokenResult] = useState("");
 
   const checkHealth = async () => {
     setHealthLoading(true);
@@ -65,30 +61,6 @@ export default function AdminSettings() {
       setHealthError("Failed to check system health");
     }
     setHealthLoading(false);
-  };
-
-  const handleUpdateToken = async () => {
-    if (!newToken.trim()) return;
-    setTokenUpdating(true);
-    setTokenResult("");
-    try {
-      const res = await fetch("/api/health/update-token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: newToken.trim() }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setTokenResult(`✅ ${data.message}`);
-        setNewToken("");
-        setTimeout(checkHealth, 2000);
-      } else {
-        setTokenResult(`❌ ${data.error || "Failed to update token"}`);
-      }
-    } catch {
-      setTokenResult("❌ Network error — could not update token");
-    }
-    setTokenUpdating(false);
   };
 
   useEffect(() => {
@@ -435,7 +407,7 @@ export default function AdminSettings() {
             <div className="space-y-3 mb-4">
               <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
                 <div className="flex items-center gap-2">
-                  <Key className="w-4 h-4 text-slate-400" />
+                  <Activity className="w-4 h-4 text-slate-400" />
                   <span className="text-sm text-slate-700">GitHub Token</span>
                 </div>
                 <StatusBadge status={health.githubToken.status} />
@@ -454,11 +426,6 @@ export default function AdminSettings() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                <span className="text-sm text-slate-700">Auto Token Update</span>
-                <StatusBadge status={health.vercel.configured ? "configured" : "missing"} />
-              </div>
-              <p className="text-xs text-slate-500 -mt-2">{health.vercel.message}</p>
 
               <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-100">
                 <span className="text-sm font-medium text-slate-700">Overall Status</span>
@@ -474,32 +441,6 @@ export default function AdminSettings() {
             </div>
           )}
 
-          {/* Update Token Form */}
-          <div className="border-t border-slate-100 pt-4 mt-2">
-            <label className="block text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Update GitHub Token</label>
-            <p className="text-xs text-slate-400 mb-3">If the GitHub token expires, generate a new one at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">github.com/settings/tokens</a> and paste it here.</p>
-            <div className="flex items-center gap-2">
-              <input
-                type="password"
-                placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                value={newToken}
-                onChange={(e) => setNewToken(e.target.value)}
-                className="flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm font-mono"
-              />
-              <button
-                onClick={handleUpdateToken}
-                disabled={tokenUpdating || !newToken.trim()}
-                className="px-3 py-2 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-all disabled:opacity-50 shrink-0"
-              >
-                {tokenUpdating ? "Updating..." : "Update & Test"}
-              </button>
-            </div>
-            {tokenResult && (
-              <div className="mt-2 text-xs font-medium">
-                {tokenResult}
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>

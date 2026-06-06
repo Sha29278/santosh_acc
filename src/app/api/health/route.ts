@@ -13,17 +13,13 @@ const GITHUB_API = "https://api.github.com";
 export async function GET() {
   const repo = process.env.GITHUB_REPO;
   const token = process.env.GITHUB_TOKEN;
-  const vercelToken = process.env.VERCEL_TOKEN;
-
   const result: {
     githubToken: { status: string; message: string; user?: string };
     lastCommit: { exists: boolean; message?: string; date?: string; sha?: string };
-    vercel: { configured: boolean; message: string };
     overall: string;
   } = {
     githubToken: { status: "unknown", message: "" },
     lastCommit: { exists: false },
-    vercel: { configured: false, message: "" },
     overall: "degraded",
   };
 
@@ -77,14 +73,7 @@ export async function GET() {
     }
   }
 
-  // 3. Check Vercel deploy token
-  if (vercelToken) {
-    result.vercel = { configured: true, message: "VERCEL_TOKEN is configured — token updates from admin will work." };
-  } else {
-    result.vercel = { configured: false, message: "VERCEL_TOKEN not configured. Token updates will only update local .env file (committed on next deploy)." };
-  }
-
-  // 4. Overall status
+  // 3. Overall status
   if (result.githubToken.status === "valid") {
     result.overall = "healthy";
   } else if (result.githubToken.status === "expired" || result.githubToken.status === "missing") {
