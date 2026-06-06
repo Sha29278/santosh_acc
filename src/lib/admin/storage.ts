@@ -154,7 +154,9 @@ export async function uploadFile(
     await deleteFileByUrl(oldUrl);
   }
 
-  return `/uploads/${filename}`;
+  // Return /api/uploads/ URL so it goes through the API route
+  // which has the GitHub API fallback (files not yet deployed)
+  return `/api/uploads/${filename}`;
 }
 
 /**
@@ -180,7 +182,9 @@ export async function saveBase64Image(
     );
   }
 
-  return `/uploads/${safeName}`;
+  // Return /api/uploads/ URL so it goes through the API route
+  // which has the GitHub API fallback (files not yet deployed)
+  return `/api/uploads/${safeName}`;
 }
 
 /**
@@ -190,11 +194,14 @@ export async function deleteFileByUrl(url: string): Promise<void> {
   // Never delete default placeholder images
   if (url.includes("/default-") || url.includes("default-blog")) return;
 
-  if (url.startsWith("/uploads/")) {
-    const filename = url.replace("/uploads/", "");
+  // Normalize URL: strip /api/ prefix if present (files are stored without /api/ on GitHub)
+  const normalized = url.replace("/api/uploads/", "/uploads/");
+
+  if (normalized.startsWith("/uploads/")) {
+    const filename = normalized.replace("/uploads/", "");
 
     // Delete from filesystem (works locally, silently fails on Vercel)
-    safeUnlinkSync(path.join(process.cwd(), "public", url));
+    safeUnlinkSync(path.join(process.cwd(), "public", normalized));
 
     // Delete from GitHub
     if (isGitDeployEnabled()) {
@@ -207,12 +214,42 @@ export async function deleteFileByUrl(url: string): Promise<void> {
 }
 
 /**
- * List all uploaded files — reads from filesystem.
+ * List all uploaded files — tries GitHub API first (for files
+ * uploaded after last deploy), falls back to filesystem.
+ * Returns /api/uploads/ URLs so they go through the API route.
  */
 export async function listUploads(): Promise<string[]> {
+  // 1. Try GitHub API to list files in public/uploads/
+  const repo = process.env.GITHUB_REPO;
+  const token = process.env.GITHUB_TOKEN;
+  if (repo && token) {
+    try {
+      const url = `https://api.github.com/repos/${repo}/contents/public/uploads`;
+      const res = await fetch(url, {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "acctax-solutions",
+        },
+      });
+      if (res.ok) {
+        const body = await res.json() as { name: string; type: string }[];
+        if (Array.isArray(body)) {
+          return body
+            .filter((item) => item.type === "file")
+            .map((item) => `/api/uploads/${item.name}`);
+        }
+      }
+    } catch {
+      // Fall through to filesystem
+    }
+  }
+
+  // 2. Fall back to filesystem (local dev, or deployed files)
   try {
     ensureDir(UPLOADS_DIR);
-    return fs.readdirSync(UPLOADS_DIR).map((f) => `/uploads/${f}`);
+    return fs.readdirSync(UPLOADS_DIR).map((f) => `/api/uploads/${f}`);
   } catch {
     return [];
   }
