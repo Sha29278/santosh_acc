@@ -1,21 +1,5 @@
 {
-  "common": {
-    "loading": "Loading...",
-    "error": "An error occurred",
-    "search": "Search",
-    "noResults": "No results found",
-    "viewAll": "View All",
-    "readMore": "Read More",
-    "getStarted": "Get Started",
-    "learnMore": "Learn More",
-    "submit": "Submit",
-    "cancel": "Cancel",
-    "save": "Save",
-    "delete": "Delete",
-    "edit": "Edit",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "testField": "Token works! Saved at: 2026-06-07"
+  "hero": {
+    "subtitle": "TEST-VERIFY-SAVE-PIPELINE-123"
   }
 }
