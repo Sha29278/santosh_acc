@@ -1,8 +1,8 @@
 {
   "hero": {
-    "ctaPrimary": "TEST-NO-DEPLOY-789"
+    "ctaPrimary": "File Now"
   },
   "common": {
-    "loading": "TEST-NO-DEPLOY-789"
+    "loading": "Loading..."
   }
 }
