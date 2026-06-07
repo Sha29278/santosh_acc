@@ -146,6 +146,10 @@ export interface Translations {
     subtitle: string;
     searchPlaceholder: string;
     noResults: string;
+    items?: Array<{
+      question: string;
+      answer: string;
+    }>;
   };
   contact: {
     badge: string;

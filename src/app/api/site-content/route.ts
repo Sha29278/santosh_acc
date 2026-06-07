@@ -195,6 +195,14 @@ const DEFAULT_CONTENT: Record<string, Record<string, unknown>> = {
     badge: "FAQ", title: "Frequently Asked Questions",
     subtitle: "Got questions? We've got answers. Can't find what you're looking for? Contact our support team.",
     searchPlaceholder: "Search FAQs...", noResults: "No FAQs found matching your search.",
+    items: [
+      { question: "What is GST and who needs to register?", answer: "GST (Goods and Services Tax) is a comprehensive indirect tax on supply of goods and services. Businesses with turnover exceeding ₹40 lakhs (₹20 lakhs for special category states) must register. E-commerce operators, inter-state suppliers, and certain other categories require mandatory registration regardless of turnover." },
+      { question: "How long does GST registration take?", answer: "GST registration typically takes 5-7 working days once all documents are submitted correctly. Our expert team ensures error-free application to avoid delays. We handle the entire process end-to-end." },
+      { question: "What documents are needed for GST registration?", answer: "You'll need PAN card, Aadhaar card, proof of business registration (if applicable), bank account details, cancelled cheque, address proof of business premises, and digital signature. Our team will guide you through the complete list based on your business type." },
+      { question: "What is the difference between GSTR-1 and GSTR-3B?", answer: "GSTR-1 is a monthly/quarterly return showing outward supplies (sales) while GSTR-3B is a summary return with details of sales, purchases, and tax liability. GSTR-1 is due on 11th and GSTR-3B on 20th of every month. We handle both for you." },
+      { question: "What are the penalties for late GST filing?", answer: "Late filing attracts a late fee of ₹50 per day (₹25 CGST + ₹25 SGST) for regular returns. Interest at 18% per annum is also applicable on the tax amount. Our timely reminder system helps you avoid these penalties." },
+      { question: "New vs Old Tax Regime: Which is better?", answer: "The new regime offers lower tax rates but fewer deductions. The old regime has higher rates but allows deductions under 80C, 80D, HRA, etc. For most salaried employees with home loans or insurance, the old regime may be beneficial. Use our Income Tax Calculator to compare both." },
+    ],
   },
   contact: {
     badge: "Get in Touch", title: "Let's Talk About Your Tax Needs",

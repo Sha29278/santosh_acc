@@ -1,27 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { HelpCircle, ArrowLeft, ChevronDown, Search } from "lucide-react";
-
-interface FAQItem {
-  question: string;
-  answer: string;
-}
+import { useLanguage } from "@/lib/i18n";
 
 export default function FAQPage() {
-  const [faqs, setFaqs] = useState<FAQItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
+  const faqs = (t.faq?.items || []) as { question: string; answer: string }[];
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    fetch("/api/data/faqs")
-      .then((r) => r.json())
-      .then((data) => setFaqs(Array.isArray(data) ? data : []))
-      .finally(() => setLoading(false));
-  }, []);
 
   const filtered = faqs.filter(
     (faq) =>
@@ -74,9 +63,7 @@ export default function FAQPage() {
         </div>
 
         {/* FAQ List */}
-        {loading ? (
-          <div className="text-center py-20 text-slate-400">Loading...</div>
-        ) : filtered.length === 0 ? (
+        {filtered.length === 0 ? (
           <div className="text-center py-20">
             <HelpCircle className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <p className="text-slate-500 font-medium">No FAQs found</p>
