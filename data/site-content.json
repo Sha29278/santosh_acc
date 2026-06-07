@@ -10,7 +10,7 @@
     "statYearsLabel": "Years Experience",
     "statClients": "100+",
     "statClientsLabel": "Trusted Customers",
-    "statAccuracy": "99.9%",
+    "statAccuracy": "99%",
     "statAccuracyLabel": "Filing Accuracy",
     "description": "Expert guidance on GST registration, filing, and compliance.",
     "cta": "Get Free Consultation"
@@ -57,7 +57,7 @@
         "faq": "FAQ"
       }
     },
-    "copyright": "? 2025 AccTax Solutions"
+    "copyright": "� 2025 AccTax Solutions"
   },
   "about": {
     "badge": "About Us",
@@ -83,7 +83,7 @@
         },
         {
           "title": "Expert Leadership",
-          "desc": "Founded by Santosh Sharma � an experienced Accountant with deep expertise in GST, Income Tax, TDS, and financial management."
+          "desc": "Founded by Santosh Sharma — an experienced Accountant with deep expertise in GST, Income Tax, TDS, and financial management."
         }
       ]
     },
@@ -179,7 +179,7 @@
     "yourIncome": "Your Monthly Turnover",
     "enterIncome": "Enter your monthly turnover...",
     "recommended": "We recommend the",
-    "mostPopular": "?? Most Popular",
+    "mostPopular": "🔥 Most Popular",
     "getStarted": "Get Started",
     "incomeTag": "Turnover",
     "comparePlans": "Compare Plans Side by Side",
@@ -227,7 +227,7 @@
       "selectService": "Select a service...",
       "message": "Message",
       "sendMessage": "Send Message",
-      "thankYou": "Thank You! ??",
+      "thankYou": "Thank You! 🎉",
       "thankYouMessage": "We'll get back to you within 24 hours."
     },
     "callUs": "Call Us",
@@ -251,7 +251,7 @@
     "gst": {
       "title": "Enter Details",
       "enterDetails": "Enter Details",
-      "amount": "Amount (?)",
+      "amount": "Amount (₹)",
       "enterAmount": "Enter amount",
       "gstRate": "GST Rate",
       "taxType": "Tax Type",
@@ -262,8 +262,8 @@
       "transactionType": "Transaction Type",
       "intraState": "Intra-state",
       "interState": "Inter-state",
-      "intraStateHint": "Same state ? CGST + SGST",
-      "interStateHint": "Different states ? IGST",
+      "intraStateHint": "Same state → CGST + SGST",
+      "interStateHint": "Different states → IGST",
       "calculate": "Calculate GST",
       "noResults": "No results yet",
       "noResultsHint": "Enter an amount and calculate GST",
@@ -271,20 +271,20 @@
       "taxableValue": "Taxable Value",
       "totalGst": "Total GST",
       "grandTotal": "Grand Total",
-      "copyResult": "?? Copy Result",
-      "copied": "? Copied!",
+      "copyResult": "📋 Copy Result",
+      "copied": "✓ Copied!",
       "understandingGst": "Understanding GST",
       "gstHowTitle": "How GST is Calculated in India",
       "gstHowSubtitle": "A quick overview of GST rates and tax components.",
       "cgstSgstTitle": "Intra-state (Same state)",
       "cgstSgstDesc": "GST is split equally into CGST (Central) and SGST (State). Each gets half of the total GST rate.",
       "igstTitle": "Inter-state (Different states)",
-      "igstDesc": "Full GST rate is applied as IGST (Integrated). No split � the entire tax goes to the central government."
+      "igstDesc": "Full GST rate is applied as IGST (Integrated). No split — the entire tax goes to the central government."
     },
     "incomeTax": {
       "title": "Income Details",
       "incomeDetails": "Income Details",
-      "annualIncome": "Monthly Turnover (?)",
+      "annualIncome": "Monthly Turnover (₹)",
       "enterIncome": "Enter your monthly turnover",
       "taxRegime": "Tax Regime",
       "newRegime": "New Regime",
