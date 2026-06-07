@@ -276,11 +276,11 @@ export default function AboutPage() {
                         const hiddenCount = photos.length - PHOTOS_SHOWN;
                         return (
                           <div className="mt-3">
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-3">
                               {visiblePhotos.map((photoUrl: string, pIdx: number) => (
                                 <div
                                   key={pIdx}
-                                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border border-slate-200 hover:shadow-md hover:border-blue-300 transition-all duration-300"
+                                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-lg overflow-hidden border border-slate-200 hover:shadow-md hover:border-blue-300 transition-all duration-300"
                                 >
                                   <img
                                     src={photoUrl}
