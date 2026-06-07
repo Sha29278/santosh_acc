@@ -87,6 +87,26 @@
         }
       ]
     },
+    "companies": [
+      {
+        "name": "Kaziranga University",
+        "role": "Accountant",
+        "description": "Managed financial operations, payroll, GST filing, and taxation for the university (2023–2025).",
+        "photoUrl": "/api/uploads/1780854243372-ats-logo.png"
+      },
+      {
+        "name": "Electrokings India",
+        "role": "Cost Accountant (Manufacturing)",
+        "description": "Handled manufacturing cost accounting, inventory valuation, and tax compliance.",
+        "photoUrl": ""
+      },
+      {
+        "name": "S.K Kalani and Company",
+        "role": "Tax Consultant",
+        "description": "Multi-client tax consultancy providing GST, Income Tax, and audit support.",
+        "photoUrl": ""
+      }
+    ],
     "team": {
       "badge": "Our Team",
       "title": "Meet the Experts Behind AccTax Solutions",
