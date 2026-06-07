@@ -92,7 +92,11 @@
         "name": "Kaziranga University",
         "role": "Accountant",
         "description": "Managed financial operations, payroll, GST filing, and taxation for the university (2023–2025).",
-        "photoUrl": "/api/uploads/1780854323028-KU.jpg"
+        "photoUrl": "/api/uploads/1780854323028-KU.jpg",
+        "photos": [
+          "/api/uploads/1780855498204-ats-logo.png",
+          "/api/uploads/1780855502505-KU.jpg"
+        ]
       },
       {
         "name": "Electrokings India",
