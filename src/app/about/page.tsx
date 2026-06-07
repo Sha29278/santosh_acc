@@ -248,21 +248,9 @@ export default function AboutPage() {
                     transition={{ delay: i * 0.1 }}
                     className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 flex items-start gap-4 hover:shadow-md hover:border-blue-200 transition-all duration-300 group"
                   >
-                    {/* Company Photo */}
+                    {/* Company Icon */}
                     <div className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 border border-slate-200 flex items-center justify-center">
-                      {company.photoUrl ? (
-                        <img
-                          src={company.photoUrl}
-                          alt={company.name || "Company"}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                            (e.target as HTMLImageElement).parentElement!.classList.add('flex', 'items-center', 'justify-center');
-                          }}
-                        />
-                      ) : (
-                        <Briefcase className="w-7 h-7 sm:w-9 sm:h-9 text-slate-400" />
-                      )}
+                      <Briefcase className="w-7 h-7 sm:w-9 sm:h-9 text-slate-400" />
                     </div>
                     {/* Company Info */}
                     <div className="flex-1 min-w-0">
@@ -276,6 +264,26 @@ export default function AboutPage() {
                         <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
                           {company.description}
                         </p>
+                      )}
+                      {/* Company Photos */}
+                      {(company.photos || []).filter((p: string) => p).length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {(company.photos || []).filter((p: string) => p).map((photoUrl: string, pIdx: number) => (
+                            <div
+                              key={pIdx}
+                              className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border border-slate-200 hover:shadow-md hover:border-blue-300 transition-all duration-300"
+                            >
+                              <img
+                                src={photoUrl}
+                                alt={`${company.name} photo ${pIdx + 1}`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
                   </motion.div>

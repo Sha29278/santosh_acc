@@ -64,19 +64,19 @@ const DEFAULT_CONTENT: Record<string, Record<string, unknown>> = {
         name: "Kaziranga University",
         role: "Accountant",
         description: "Managed financial operations, payroll, GST filing, and taxation for the university (2023–2025).",
-        photoUrl: "",
+        photos: [""],
       },
       {
         name: "Electrokings India",
         role: "Cost Accountant (Manufacturing)",
         description: "Handled manufacturing cost accounting, inventory valuation, and tax compliance.",
-        photoUrl: "",
+        photos: [""],
       },
       {
         name: "S.K Kalani and Company",
         role: "Tax Consultant",
         description: "Multi-client tax consultancy providing GST, Income Tax, and audit support.",
-        photoUrl: "",
+        photos: [""],
       },
     ],
     team: {

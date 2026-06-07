@@ -99,10 +99,18 @@ export default function AdminContent() {
     setSuccess("");
     setError("");
     try {
+      // Strip temporary _newPhotoUrl fields before saving
+      const cleanContent = JSON.parse(JSON.stringify(content));
+      if (cleanContent.about?.companies) {
+        cleanContent.about.companies = cleanContent.about.companies.map((c: any) => {
+          const { _newPhotoUrl, ...rest } = c;
+          return rest;
+        });
+      }
       const res = await fetch("/api/site-content", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(content),
+        body: JSON.stringify(cleanContent),
       });
       const data = await res.json();
       if (data.success) {
@@ -706,81 +714,110 @@ export default function AdminContent() {
                             updateField("about", "companies", arr);
                           }} multiline rows={2} />
                       </div>
-                      {/* Photo upload */}
+                      {/* Photos upload */}
                       <div className="sm:col-span-2">
-                        <label className="block text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">Company Photo</label>
-                        <div className="flex items-center gap-3">
-                          {company.photoUrl ? (
-                            <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shrink-0">
-                              <img
-                                src={company.photoUrl}
-                                alt={company.name || "Company"}
-                                className="w-full h-full object-cover"
-                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-16 h-16 rounded-lg bg-slate-200 flex items-center justify-center shrink-0">
-                              <span className="text-xs text-slate-400">No photo</span>
-                            </div>
-                          )}
-                          <div className="flex-1">
-                            <input
-                              type="text"
-                              placeholder="Paste image URL..."
-                              value={company.photoUrl || ""}
-                              onChange={(e) => {
-                                const arr = [...((content.about?.companies) || [])];
-                                arr[i] = { ...arr[i], photoUrl: e.target.value };
-                                updateField("about", "companies", arr);
-                              }}
-                              className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm mb-2"
-                            />
-                            <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:border-blue-300 cursor-pointer transition-all">
-                              <Upload className="w-3.5 h-3.5" />
-                              Upload Photo
-                              <input
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={async (e) => {
-                                  const file = e.target.files?.[0];
-                                  if (!file) return;
-                                  const formData = new FormData();
-                                  formData.append("file", file);
-                                  const res = await fetch("/api/upload", {
-                                    method: "POST",
-                                    body: formData,
-                                  });
-                                  const data = await res.json();
-                                  if (data.url) {
+                        <label className="block text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">Company Photos</label>
+                        <p className="text-xs text-slate-400 mb-2">Add multiple photos — paste a URL or upload files.</p>
+                        {/* Photo grid */}
+                        {(company.photos || []).length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {(company.photos || []).map((photoUrl: string, pIdx: number) => (
+                              <div key={pIdx} className="relative group w-16 h-16 rounded-lg overflow-hidden border border-slate-200">
+                                {photoUrl ? (
+                                  <img
+                                    src={photoUrl}
+                                    alt={`Photo ${pIdx + 1}`}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-slate-100 flex items-center justify-center">
+                                    <span className="text-[10px] text-slate-400">Empty</span>
+                                  </div>
+                                )}
+                                <button
+                                  onClick={() => {
                                     const arr = [...((content.about?.companies) || [])];
-                                    arr[i] = { ...arr[i], photoUrl: data.url };
+                                    const photos = [...(company.photos || [])];
+                                    photos.splice(pIdx, 1);
+                                    arr[i] = { ...arr[i], photos };
                                     updateField("about", "companies", arr);
-                                  }
-                                }}
-                              />
-                            </label>
-                            {company.photoUrl && (
-                              <button
-                                onClick={() => {
-                                  const arr = [...((content.about?.companies) || [])];
-                                  arr[i] = { ...arr[i], photoUrl: "" };
-                                  updateField("about", "companies", arr);
-                                }}
-                                className="ml-2 inline-flex items-center gap-1 px-2 py-1.5 text-xs text-red-600 hover:text-red-700 transition-all"
-                              >
-                                <Trash2 className="w-3 h-3" /> Remove
-                              </button>
-                            )}
+                                  }}
+                                  className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
                           </div>
+                        )}
+                        {/* Add photo input */}
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            placeholder="Paste image URL..."
+                            value={(company._newPhotoUrl || "")}
+                            onChange={(e) => {
+                              const arr = [...((content.about?.companies) || [])];
+                              arr[i] = { ...arr[i], _newPhotoUrl: e.target.value };
+                              updateField("about", "companies", arr);
+                            }}
+                            className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                          />
+                          <button
+                            onClick={() => {
+                              const url = (company._newPhotoUrl || "").trim();
+                              if (!url) return;
+                              const arr = [...((content.about?.companies) || [])];
+                              const photos = [...(company.photos || [])];
+                              arr[i] = {
+                                ...arr[i],
+                                photos: [...photos, url],
+                                _newPhotoUrl: "",
+                              };
+                              updateField("about", "companies", arr);
+                            }}
+                            className="px-3 py-2 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-all"
+                          >
+                            Add
+                          </button>
+                          <label className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:border-blue-300 cursor-pointer transition-all">
+                            <Upload className="w-3.5 h-3.5" />
+                            Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                const formData = new FormData();
+                                formData.append("file", file);
+                                const res = await fetch("/api/upload", {
+                                  method: "POST",
+                                  body: formData,
+                                });
+                                const data = await res.json();
+                                if (data.url) {
+                                  const arr = [...((content.about?.companies) || [])];
+                                  const photos = [...(company.photos || [])];
+                                  arr[i] = {
+                                    ...arr[i],
+                                    photos: [...photos, data.url],
+                                    _newPhotoUrl: "",
+                                  };
+                                  updateField("about", "companies", arr);
+                                }
+                              }}
+                            />
+                          </label>
                         </div>
                       </div>
                     </div>
                   </div>
                 ))}
                 <button onClick={() => {
-                  const arr = [...((content.about?.companies) || []), { name: "", role: "", description: "", photoUrl: "" }];
+                  const arr = [...((content.about?.companies) || []), { name: "", role: "", description: "", photos: [] }];
                   updateField("about", "companies", arr);
                 }}
                   className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700">
