@@ -6,7 +6,7 @@ import Link from "next/link";
 import SectionTitle from "@/components/ui/section-title";
 import Badge from "@/components/ui/badge";
 import { useBlogPosts } from "@/lib/admin/data-context";
-import { Search, Calendar, Clock, ArrowRight, Sparkles } from "lucide-react";
+import { Search, Calendar, Clock, ArrowRight, Sparkles, Link as LinkIcon, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
 export default function BlogPage() {
@@ -149,6 +149,86 @@ export default function BlogPage() {
           )}
         </div>
       </section>
+
+      {/* Managed Articles Section */}
+      {(t.blog?.articles || []).length > 0 && (
+        <section className="py-16 bg-white relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-48 h-48 bg-blue-50/80 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-indigo-50/80 rounded-full blur-3xl" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionTitle
+              title={t.blog.latestInsights}
+              subtitle={t.blog.insightsSubtitle}
+            />
+            <div className="mt-10 space-y-6">
+              {(t.blog?.articles || []).map((article: any, i: number) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 hover:shadow-lg hover:border-blue-200 transition-all duration-300"
+                >
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                      <h3 className="text-xl md:text-2xl font-bold text-slate-900">{article.title}</h3>
+                      <div className="flex items-center gap-3 mt-2">
+                        <Badge variant="primary">{article.category}</Badge>
+                        {article.date && (
+                          <span className="text-xs text-slate-500 flex items-center gap-1">
+                            <Calendar className="w-3.5 h-3.5" /> {article.date}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {article.content && (
+                    <p className="text-sm text-slate-600 leading-relaxed mb-4">{article.content}</p>
+                  )}
+
+                  {/* Important Points */}
+                  {(article.importantPoints || []).length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="text-sm font-semibold text-slate-700 mb-2">Key Points:</h4>
+                      <ul className="space-y-1.5">
+                        {(article.importantPoints || []).map((point: string, pIdx: number) => (
+                          <li key={pIdx} className="flex items-start gap-2 text-sm text-slate-600">
+                            <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Reference Links */}
+                  {(article.links || []).length > 0 && (
+                    <div className="pt-3 border-t border-slate-100">
+                      <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Reference Links</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {(article.links || []).map((link: any, lIdx: number) => (
+                          <a
+                            key={lIdx}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100 hover:text-blue-800 transition-all"
+                          >
+                            <LinkIcon className="w-3.5 h-3.5" />
+                            {link.label || link.url}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

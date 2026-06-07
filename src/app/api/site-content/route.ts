@@ -140,6 +140,56 @@ const DEFAULT_CONTENT: Record<string, Record<string, unknown>> = {
     noArticlesHint: "Try adjusting your search or filter.",
     latestInsights: "Latest Articles & Insights",
     insightsSubtitle: "Stay informed with expert analysis on tax laws, compliance updates, and business strategies.",
+    articles: [
+      {
+        title: "Complete Guide to GST Registration",
+        category: "GST",
+        date: "March 15, 2025",
+        content: "GST registration is mandatory for businesses with turnover exceeding ₹40 lakhs. The process involves submitting PAN, Aadhaar, business proof, and bank details on the GST portal. Once verified, you receive your GSTIN within 5-7 working days.",
+        importantPoints: [
+          "Threshold: ₹40 lakhs (₹20 lakhs for special category states)",
+          "Documents needed: PAN, Aadhaar, business proof, bank details",
+          "Timeline: 5-7 working days after application",
+          "Mandatory for e-commerce operators regardless of turnover",
+        ],
+        links: [
+          { label: "GST Portal Official Site", url: "https://www.gst.gov.in" },
+          { label: "GST Registration Guide (CBIC)", url: "https://www.cbic.gov.in" },
+        ],
+      },
+      {
+        title: "Income Tax Saving Strategies for FY 2025-26",
+        category: "Income Tax",
+        date: "March 10, 2025",
+        content: "Smart tax planning can significantly reduce your tax liability. Under the old regime, you can claim deductions up to ₹1.5 lakh under Section 80C, plus additional deductions for health insurance, NPS, and home loan interest.",
+        importantPoints: [
+          "Section 80C: Up to ₹1.5 lakh deduction (PF, ELSS, life insurance, etc.)",
+          "Section 80D: Health insurance premium deduction up to ₹25,000",
+          "Home loan interest: Up to ₹2 lakh deduction under Section 24",
+          "NPS: Additional ₹50,000 deduction under Section 80CCD(1B)",
+        ],
+        links: [
+          { label: "Income Tax Portal", url: "https://www.incometax.gov.in" },
+          { label: "New vs Old Regime Calculator", url: "https://www.incometax.gov.in/iec/foportal" },
+        ],
+      },
+      {
+        title: "TDS Compliance: What Every Business Must Know",
+        category: "TDS",
+        date: "February 20, 2025",
+        content: "TDS (Tax Deducted at Source) is a mechanism where the payer deducts tax before making certain payments. Businesses must deduct TDS on salaries, rent, professional fees, contractor payments, and interest. The deducted amount must be deposited to the government by the 7th of the next month.",
+        importantPoints: [
+          "TDS on salary: As per income tax slab rates",
+          "TDS on rent: 10% for rent above ₹2.4 lakh/year",
+          "TDS on professional fees: 10% for individuals",
+          "Due date for deposit: 7th of next month",
+          "Form 16/16A must be issued to deductees annually",
+        ],
+        links: [
+          { label: "TDS Rates Chart (CBDT)", url: "https://www.incometax.gov.in/iec/tds" },
+        ],
+      },
+    ],
   },
   faq: {
     badge: "FAQ", title: "Frequently Asked Questions",

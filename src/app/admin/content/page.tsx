@@ -1027,6 +1027,131 @@ export default function AdminContent() {
                     onChange={(v) => updateField("blog", key, v)} />
                 ))}
               </div>
+
+              <div className="border-t border-slate-100 pt-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">Blog Articles</h3>
+                <p className="text-xs text-slate-400 mb-3">Add blog articles with important points, written content, and reference links.</p>
+                {(content.blog?.articles || []).map((article: any, i: number) => (
+                  <div key={i} className="bg-slate-50 rounded-xl p-4 mb-3 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-500">Article {i + 1}</span>
+                      <button onClick={() => {
+                        const arr = [...((content.blog?.articles) || [])];
+                        arr.splice(i, 1);
+                        updateField("blog", "articles", arr);
+                      }} className="p-1 rounded text-slate-400 hover:text-red-600"><Trash2 className="w-3.5 h-3.5" /></button>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <Input label="Article Title" value={article.title || ""}
+                        onChange={(v) => updateArrayItem("blog", "articles", i, "title", v)} />
+                      <Input label="Category" value={article.category || ""}
+                        onChange={(v) => updateArrayItem("blog", "articles", i, "category", v)} />
+                      <Input label="Date" value={article.date || ""}
+                        onChange={(v) => updateArrayItem("blog", "articles", i, "date", v)} />
+                    </div>
+                    <div>
+                      <Input label="Content (written article)" value={article.content || ""}
+                        onChange={(v) => updateArrayItem("blog", "articles", i, "content", v)} multiline rows={4} />
+                    </div>
+                    {/* Important Points */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">Important Points</label>
+                      {(article.importantPoints || []).map((point: string, pIdx: number) => (
+                        <div key={pIdx} className="flex items-center gap-2 mb-1.5">
+                          <input
+                            type="text"
+                            value={point}
+                            onChange={(e) => {
+                              const arr = [...((content.blog?.articles) || [])];
+                              const pts = [...(article.importantPoints || [])];
+                              pts[pIdx] = e.target.value;
+                              arr[i] = { ...arr[i], importantPoints: pts };
+                              updateField("blog", "articles", arr);
+                            }}
+                            className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                          />
+                          <button onClick={() => {
+                            const arr = [...((content.blog?.articles) || [])];
+                            const pts = [...(article.importantPoints || [])];
+                            pts.splice(pIdx, 1);
+                            arr[i] = { ...arr[i], importantPoints: pts };
+                            updateField("blog", "articles", arr);
+                          }} className="p-1 rounded text-slate-400 hover:text-red-600"><Trash2 className="w-3 h-3" /></button>
+                        </div>
+                      ))}
+                      <button onClick={() => {
+                        const arr = [...((content.blog?.articles) || [])];
+                        const pts = [...(article.importantPoints || []), "New point"];
+                        arr[i] = { ...arr[i], importantPoints: pts };
+                        updateField("blog", "articles", arr);
+                      }}
+                        className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 mt-1">
+                        <Plus className="w-3 h-3" /> Add Point
+                      </button>
+                    </div>
+                    {/* Links */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-500 mb-1 uppercase tracking-wider">Reference Links</label>
+                      {(article.links || []).map((link: any, lIdx: number) => (
+                        <div key={lIdx} className="flex items-center gap-2 mb-1.5">
+                          <input
+                            type="text"
+                            placeholder="Label"
+                            value={link.label || ""}
+                            onChange={(e) => {
+                              const arr = [...((content.blog?.articles) || [])];
+                              const links = [...(article.links || [])];
+                              links[lIdx] = { ...links[lIdx], label: e.target.value };
+                              arr[i] = { ...arr[i], links };
+                              updateField("blog", "articles", arr);
+                            }}
+                            className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                          />
+                          <input
+                            type="text"
+                            placeholder="URL"
+                            value={link.url || ""}
+                            onChange={(e) => {
+                              const arr = [...((content.blog?.articles) || [])];
+                              const links = [...(article.links || [])];
+                              links[lIdx] = { ...links[lIdx], url: e.target.value };
+                              arr[i] = { ...arr[i], links };
+                              updateField("blog", "articles", arr);
+                            }}
+                            className="flex-[1.5] px-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                          />
+                          <button onClick={() => {
+                            const arr = [...((content.blog?.articles) || [])];
+                            const links = [...(article.links || [])];
+                            links.splice(lIdx, 1);
+                            arr[i] = { ...arr[i], links };
+                            updateField("blog", "articles", arr);
+                          }} className="p-1 rounded text-slate-400 hover:text-red-600"><Trash2 className="w-3 h-3" /></button>
+                        </div>
+                      ))}
+                      <button onClick={() => {
+                        const arr = [...((content.blog?.articles) || [])];
+                        const links = [...(article.links || []), { label: "", url: "" }];
+                        arr[i] = { ...arr[i], links };
+                        updateField("blog", "articles", arr);
+                      }}
+                        className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 mt-1">
+                        <Plus className="w-3 h-3" /> Add Link
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button onClick={() => {
+                  const arr = [...((content.blog?.articles) || []), {
+                    title: "New Article", category: "Category", date: "",
+                    content: "", importantPoints: [], links: [],
+                  }];
+                  updateField("blog", "articles", arr);
+                }}
+                  className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700">
+                  <Plus className="w-3.5 h-3.5" /> Add Article
+                </button>
+              </div>
             </>
           )}
 

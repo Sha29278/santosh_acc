@@ -131,6 +131,14 @@ export interface Translations {
     noArticlesHint: string;
     latestInsights: string;
     insightsSubtitle: string;
+    articles?: Array<{
+      title: string;
+      category: string;
+      date: string;
+      content: string;
+      importantPoints: string[];
+      links: Array<{ label: string; url: string }>;
+    }>;
   };
   faq: {
     badge: string;
