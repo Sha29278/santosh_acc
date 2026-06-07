@@ -171,6 +171,12 @@ export interface Translations {
     titleHighlight: string;
     subtitle: string;
     mission: string;
+    companies?: Array<{
+      name: string;
+      role: string;
+      description: string;
+      photoUrl: string;
+    }>;
     values: {
       title: string;
       subtitle: string;

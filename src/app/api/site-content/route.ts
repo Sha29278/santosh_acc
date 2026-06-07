@@ -59,6 +59,26 @@ const DEFAULT_CONTENT: Record<string, Record<string, unknown>> = {
         { title: "Expert Leadership", desc: "Founded by Santosh Sharma — an experienced Accountant with deep expertise in GST, Income Tax, TDS, and financial management." },
       ],
     },
+    companies: [
+      {
+        name: "Kaziranga University",
+        role: "Accountant",
+        description: "Managed financial operations, payroll, GST filing, and taxation for the university (2023–2025).",
+        photoUrl: "",
+      },
+      {
+        name: "Electrokings India",
+        role: "Cost Accountant (Manufacturing)",
+        description: "Handled manufacturing cost accounting, inventory valuation, and tax compliance.",
+        photoUrl: "",
+      },
+      {
+        name: "S.K Kalani and Company",
+        role: "Tax Consultant",
+        description: "Multi-client tax consultancy providing GST, Income Tax, and audit support.",
+        photoUrl: "",
+      },
+    ],
     team: {
       badge: "Our Team", title: "Meet the Experts Behind AccTax Solutions",
       subtitle: "A dedicated team of qualified professionals committed to your success.",

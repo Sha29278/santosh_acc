@@ -225,9 +225,64 @@ export default function AboutPage() {
                   })}
                 </div>
               </div>
-            </Card>
-          </motion.div>
+            </Card>              </motion.div>
 
+          {/* Companies Worked At Section */}
+          {(t.about?.companies || []).length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="max-w-4xl mx-auto mt-10"
+            >
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-8">
+                Experience Across Industries
+              </h3>
+              <div className="space-y-4">
+                {(t.about?.companies || []).map((company: any, i: number) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 flex items-start gap-4 hover:shadow-md hover:border-blue-200 transition-all duration-300 group"
+                  >
+                    {/* Company Photo */}
+                    <div className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 border border-slate-200 flex items-center justify-center">
+                      {company.photoUrl ? (
+                        <img
+                          src={company.photoUrl}
+                          alt={company.name || "Company"}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                            (e.target as HTMLImageElement).parentElement!.classList.add('flex', 'items-center', 'justify-center');
+                          }}
+                        />
+                      ) : (
+                        <Briefcase className="w-7 h-7 sm:w-9 sm:h-9 text-slate-400" />
+                      )}
+                    </div>
+                    {/* Company Info */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-base sm:text-lg font-semibold text-slate-900 group-hover:text-blue-700 transition-colors">
+                        {company.name}
+                      </h4>
+                      <p className="text-xs sm:text-sm text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 font-medium mt-0.5">
+                        {company.role}
+                      </p>
+                      {company.description && (
+                        <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
+                          {company.description}
+                        </p>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
         </div>
       </section>
