@@ -280,7 +280,7 @@ export default function AboutPage() {
                               {visiblePhotos.map((photoUrl: string, pIdx: number) => (
                                 <div
                                   key={pIdx}
-                                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-lg overflow-hidden border border-slate-200 hover:shadow-md hover:border-blue-300 transition-all duration-300"
+                                  className="w-36 h-36 sm:w-40 sm:h-40 rounded-lg overflow-hidden border border-slate-200 hover:shadow-md hover:border-blue-300 transition-all duration-300"
                                 >
                                   <img
                                     src={photoUrl}
