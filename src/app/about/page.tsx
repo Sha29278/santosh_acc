@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import SectionTitle from "@/components/ui/section-title";
 import { Card } from "@/components/ui/card";
-import { Shield, Target, Eye, Award, Quote, Sparkles, GraduationCap, Briefcase, BookOpen, User } from "lucide-react";
+import { Shield, Target, Eye, Award, Quote, Sparkles, GraduationCap, Briefcase, BookOpen, User, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
 
 const valueIcons: React.ElementType[] = [Shield, Target, Eye, Award];
@@ -37,6 +38,8 @@ const founderIconMap: Record<string, React.ElementType> = { GraduationCap, Brief
 
 export default function AboutPage() {
   const { t } = useLanguage();
+  const [expandedCompanies, setExpandedCompanies] = useState<Record<number, boolean>>({});
+  const PHOTOS_SHOWN = 3;
   return (
     <div className="pt-20">
       {/* Hero */}
@@ -266,25 +269,45 @@ export default function AboutPage() {
                         </p>
                       )}
                       {/* Company Photos */}
-                      {(company.photos || []).filter((p: string) => p).length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-3">
-                          {(company.photos || []).filter((p: string) => p).map((photoUrl: string, pIdx: number) => (
-                            <div
-                              key={pIdx}
-                              className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border border-slate-200 hover:shadow-md hover:border-blue-300 transition-all duration-300"
-                            >
-                              <img
-                                src={photoUrl}
-                                alt={`${company.name} photo ${pIdx + 1}`}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                }}
-                              />
+                      {(company.photos || []).filter((p: string) => p).length > 0 && (() => {
+                        const photos = (company.photos || []).filter((p: string) => p);
+                        const isExpanded = expandedCompanies[i];
+                        const visiblePhotos = isExpanded ? photos : photos.slice(0, PHOTOS_SHOWN);
+                        const hiddenCount = photos.length - PHOTOS_SHOWN;
+                        return (
+                          <div className="mt-3">
+                            <div className="flex flex-wrap gap-2">
+                              {visiblePhotos.map((photoUrl: string, pIdx: number) => (
+                                <div
+                                  key={pIdx}
+                                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border border-slate-200 hover:shadow-md hover:border-blue-300 transition-all duration-300"
+                                >
+                                  <img
+                                    src={photoUrl}
+                                    alt={`${company.name} photo ${pIdx + 1}`}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
-                      )}
+                            {photos.length > PHOTOS_SHOWN && (
+                              <button
+                                onClick={() => setExpandedCompanies((prev) => ({ ...prev, [i]: !isExpanded }))}
+                                className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                              >
+                                {isExpanded ? (
+                                  <>Show Less <ChevronDown className="w-3.5 h-3.5 rotate-180 transition-transform" /></>
+                                ) : (
+                                  <>Show More (+{hiddenCount}) <ChevronDown className="w-3.5 h-3.5 transition-transform" /></>
+                                )}
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </motion.div>
                 ))}
