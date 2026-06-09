@@ -26,6 +26,7 @@ interface Submission {
 export default function SubmissionsPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState("");
 
@@ -35,6 +36,7 @@ export default function SubmissionsPage() {
       .then((r) => r.json())
       .then((data) => {
         setSubmissions(Array.isArray(data) ? data : []);
+        setLastUpdated(new Date());
       })
       .catch(() => setSubmissions([]))
       .finally(() => setLoading(false));
@@ -42,6 +44,17 @@ export default function SubmissionsPage() {
 
   useEffect(() => {
     fetchSubmissions();
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(fetchSubmissions, 30000);
+    // Also refresh when user returns to the tab
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") fetchSubmissions();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
 
   const filtered = submissions.filter((s) => {
@@ -76,6 +89,11 @@ export default function SubmissionsPage() {
           <p className="text-sm text-slate-500 mt-1">
             {submissions.length} submission{submissions.length !== 1 ? "s" : ""} received
           </p>
+          {lastUpdated && (
+            <p className="text-[10px] text-slate-400 mt-0.5">
+              Auto-refreshes every 5s · Last updated {lastUpdated.toLocaleTimeString("en-IN")}
+            </p>
+          )}
         </div>
         <button
           onClick={fetchSubmissions}
