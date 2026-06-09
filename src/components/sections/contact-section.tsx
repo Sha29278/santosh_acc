@@ -36,19 +36,8 @@ export default function ContactSection() {
       `*Service:* ${formService || "Not specified"}\n` +
       `*Message:* ${formMessage || "-"}`;
     
-    // Open WhatsApp with pre-filled message
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`, "_blank");
-    
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      // Reset form after showing thank you
-      setFormName("");
-      setFormEmail("");
-      setFormPhone("");
-      setFormService("");
-      setFormMessage("");
-    }, 5000);
+    // Navigate directly to WhatsApp with pre-filled message
+    window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
   };
 
   return (
