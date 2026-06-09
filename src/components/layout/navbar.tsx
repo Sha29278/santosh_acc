@@ -56,7 +56,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-3 xl:gap-6 whitespace-nowrap">
+          <div className="hidden lg:flex items-center gap-5 xl:gap-8 whitespace-nowrap">
             {links.map((link) => {
               const active = isActive(link.href);
               return (
