@@ -4,7 +4,7 @@
     "title": "Your Trusted",
     "titleHighlight": "Tax & GST",
     "subtitle": "From GST registration to income tax filing, we handle all your compliance needs with expertise, accuracy, and care.",
-    "ctaPrimary": "Our Services",
+    "ctaPrimary": "File Now",
     "ctaSecondary": "Book Free Consultation",
     "statYears": "13+",
     "statYearsLabel": "Years Experience",
@@ -99,10 +99,10 @@
         ]
       },
       {
-        "name": "Electrokings India",
+        "name": "Electrokings Projects Private Limited",
         "role": "Cost Accountant (Manufacturing)",
         "description": "Handled manufacturing cost accounting, inventory valuation, and tax compliance.",
-        "photoUrl": ""
+        "photoUrl": "https://gst-taxation-platform.vercel.app/api/uploads/1781008675412-EPPL.webp"
       },
       {
         "name": "S.K Kalani and Company",
