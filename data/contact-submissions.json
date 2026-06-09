@@ -7,14 +7,5 @@
     "service": "Test Service",
     "message": "This is a test submission",
     "timestamp": "2026-06-09T18:32:54.190Z"
-  },
-  {
-    "id": "sub_1781030016925_dvkrsu",
-    "name": "Debug User",
-    "email": "debug@example.com",
-    "phone": "+91 1111111111",
-    "service": "Debug",
-    "message": "Testing persistence",
-    "timestamp": "2026-06-09T18:33:36.925Z"
   }
 ]
