@@ -64,7 +64,7 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "text-xs xl:text-sm font-medium transition-colors relative group whitespace-nowrap",
+                    "text-sm font-medium transition-colors relative group whitespace-nowrap",
                     active
                       ? "text-white"
                       : "text-blue-200 hover:text-white"
@@ -84,13 +84,13 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <a href={`tel:${phone.replace(/\s+/g, "")}`} className="flex items-center gap-1.5 xl:gap-2 text-sm text-blue-200 hover:text-white transition-colors whitespace-nowrap">
+            <a href={`tel:${phone.replace(/\s+/g, "")}`} className="hidden xl:flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors whitespace-nowrap">
               <Phone className="w-4 h-4" />
-              <span className="hidden xl:inline">{phone}</span>
+              <span>{phone}</span>
             </a>
             <Link
               href="/contact"
-              className="px-3 xl:px-5 py-2 xl:py-2.5 bg-white text-blue-700 rounded-xl text-xs xl:text-sm font-semibold hover:bg-blue-50 transition-all shadow-lg whitespace-nowrap"
+              className="px-3 xl:px-5 py-2 xl:py-2.5 bg-white text-blue-700 rounded-xl text-sm font-semibold hover:bg-blue-50 transition-all shadow-lg whitespace-nowrap"
             >
               {t.nav.bookConsultation}
             </Link>
