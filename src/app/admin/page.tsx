@@ -11,6 +11,7 @@ import {
   Edit3,
   Eye,
   Image,
+  MessageSquare,
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -19,6 +20,7 @@ export default function AdminDashboard() {
     services: 0,
     faqs: 0,
     media: 0,
+    submissions: 0,
   });
 
   useEffect(() => {
@@ -27,12 +29,14 @@ export default function AdminDashboard() {
       fetch("/api/data/services").then((r) => r.json()),
       fetch("/api/data/faqs").then((r) => r.json()),
       fetch("/api/upload").then((r) => r.json()),
-    ]).then(([blogs, services, faqs, media]) => {
+      fetch("/api/contact-submissions").then((r) => r.json()),
+    ]).then(([blogs, services, faqs, media, submissions]) => {
       setStats({
         blogs: Array.isArray(blogs) ? blogs.length : 0,
         services: Array.isArray(services) ? services.length : 0,
         faqs: Array.isArray(faqs) ? faqs.length : 0,
         media: Array.isArray(media) ? media.length : 0,
+        submissions: Array.isArray(submissions) ? submissions.length : 0,
       });
     });
   }, []);
@@ -69,6 +73,14 @@ export default function AdminDashboard() {
       href: "/admin/media",
       gradient: "from-indigo-500 to-blue-600",
       shadow: "shadow-indigo-200",
+    },
+    {
+      title: "Submissions",
+      count: stats.submissions,
+      icon: MessageSquare,
+      href: "/admin/submissions",
+      gradient: "from-emerald-500 to-cyan-600",
+      shadow: "shadow-emerald-200",
     },
   ];
 

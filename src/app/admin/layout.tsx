@@ -17,6 +17,7 @@ import {
   LogOut,
   Menu,
   ChevronRight,
+  MessageSquare,
 } from "lucide-react";
 import Logo from "@/components/ui/logo";
 import { AdminProvider } from "@/lib/admin/admin-context";
@@ -31,6 +32,7 @@ const sidebarLinks = [
   { href: "/admin/tax-slabs", label: "Tax Slabs", icon: BadgePercent },
   { href: "/admin/due-dates", label: "Due Dates", icon: Calendar },
   { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
+  { href: "/admin/submissions", label: "Submissions", icon: MessageSquare },
   { href: "/admin/media", label: "Media", icon: Image },
 ];
 
