@@ -12,6 +12,11 @@ import { useSiteConfig } from "@/lib/use-site-config";
 export default function ContactSection() {
   const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
+  const [formName, setFormName] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formPhone, setFormPhone] = useState("");
+  const [formService, setFormService] = useState("");
+  const [formMessage, setFormMessage] = useState("");
   const config = useSiteConfig();
 
   const phone = config.contactPhone || "+91 9613461462";
@@ -22,8 +27,28 @@ export default function ContactSection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Build WhatsApp message from form data
+    const rawMessage = `Hi AccTax Solutions,\n\n` +
+      `*Name:* ${formName}\n` +
+      `*Email:* ${formEmail}\n` +
+      `*Phone:* ${formPhone}\n` +
+      `*Service:* ${formService || "Not specified"}\n` +
+      `*Message:* ${formMessage || "-"}`;
+    
+    // Open WhatsApp with pre-filled message
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`, "_blank");
+    
     setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 5000);
+    setTimeout(() => {
+      setSubmitted(false);
+      // Reset form after showing thank you
+      setFormName("");
+      setFormEmail("");
+      setFormPhone("");
+      setFormService("");
+      setFormMessage("");
+    }, 5000);
   };
 
   return (
@@ -60,6 +85,8 @@ export default function ContactSection() {
                       <input
                         type="text"
                         required
+                        value={formName}
+                        onChange={(e) => setFormName(e.target.value)}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
                         placeholder="Put your name"
                       />
@@ -69,36 +96,45 @@ export default function ContactSection() {
                       <input
                         type="email"
                         required
+                        value={formEmail}
+                        onChange={(e) => setFormEmail(e.target.value)}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
                         placeholder="Your email"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">{t.contact.form.phone}</label>
-                    <input
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">{t.contact.form.phone}</label>                      <input
                       type="tel"
                       required
+                      value={formPhone}
+                      onChange={(e) => setFormPhone(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all"
                       placeholder="Your phone no"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1.5">{t.contact.form.serviceNeeded}</label>
-                    <select className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white">
+                    <select
+                      value={formService}
+                      onChange={(e) => setFormService(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white"
+                    >
                       <option value="">{t.contact.form.selectService}</option>
-                      <option>GST Registration</option>
-                      <option>GST Return Filing</option>
-                      <option>Income Tax Filing</option>
-                      <option>TDS Return Filing</option>
-                      <option>Company Registration</option>
-                      <option>Other</option>
+                      <option value="GST Registration">GST Registration</option>
+                      <option value="GST Return Filing">GST Return Filing</option>
+                      <option value="Income Tax Filing">Income Tax Filing</option>
+                      <option value="TDS Return Filing">TDS Return Filing</option>
+                      <option value="Company Registration">Company Registration</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1.5">{t.contact.form.message}</label>
                     <textarea
                       rows={4}
+                      value={formMessage}
+                      onChange={(e) => setFormMessage(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all resize-none"
                       placeholder="Tell us about your requirements..."
                     />
