@@ -41,7 +41,7 @@ export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 shadow-lg border-b border-white/10">
       <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20">
+        <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20 overflow-hidden">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5">
             {logoUrl ? (
@@ -56,7 +56,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-4 xl:gap-6">
+          <div className="hidden lg:flex items-center gap-3 xl:gap-6 whitespace-nowrap">
             {links.map((link) => {
               const active = isActive(link.href);
               return (
@@ -64,7 +64,7 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "text-sm font-medium transition-colors relative group",
+                    "text-xs xl:text-sm font-medium transition-colors relative group whitespace-nowrap",
                     active
                       ? "text-white"
                       : "text-blue-200 hover:text-white"
@@ -84,13 +84,13 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <a href={`tel:${phone.replace(/\s+/g, "")}`} className="flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors">
+            <a href={`tel:${phone.replace(/\s+/g, "")}`} className="flex items-center gap-1.5 xl:gap-2 text-sm text-blue-200 hover:text-white transition-colors whitespace-nowrap">
               <Phone className="w-4 h-4" />
-              <span>{phone}</span>
+              <span className="hidden xl:inline">{phone}</span>
             </a>
             <Link
               href="/contact"
-              className="px-5 py-2.5 bg-white text-blue-700 rounded-xl text-sm font-semibold hover:bg-blue-50 transition-all shadow-lg"
+              className="px-3 xl:px-5 py-2 xl:py-2.5 bg-white text-blue-700 rounded-xl text-xs xl:text-sm font-semibold hover:bg-blue-50 transition-all shadow-lg whitespace-nowrap"
             >
               {t.nav.bookConsultation}
             </Link>
