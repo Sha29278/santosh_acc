@@ -4,7 +4,7 @@ export const en: Translations = {
   nav: {
     home: "Home",
     about: "About",
-    services: "Services",
+    services: "Our Services",
     taxCalculator: "GST Calculator",
     incomeTaxCalculator: "Income Tax Calculator",
     pricing: "Pricing",
@@ -15,7 +15,7 @@ export const en: Translations = {
   },
   footer: {
     tagline: "Your trusted partner for GST filing, taxation, and business compliance services across India. We make tax simple.",
-    services: "Services",
+    services: "Our Services",
     company: "Company",
     support: "Support",
     followUs: "Follow Us",
@@ -32,7 +32,7 @@ export const en: Translations = {
       },
       company: {
         aboutUs: "About Us",
-        services: "Services",
+        services: "Our Services",
         pricing: "Pricing",
         blog: "Blog",
         contactUs: "Contact Us",
