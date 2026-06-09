@@ -25,19 +25,54 @@ export default function ContactSection() {
   const phoneHref = phone.replace(/\s+/g, "");
   const whatsappNumber = phone.replace(/[^0-9]/g, "");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [sending, setSending] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Build WhatsApp message from form data
-    const rawMessage = `Hi AccTax Solutions,\n\n` +
-      `*Name:* ${formName}\n` +
-      `*Email:* ${formEmail}\n` +
-      `*Phone:* ${formPhone}\n` +
-      `*Service:* ${formService || "Not specified"}\n` +
-      `*Message:* ${formMessage || "-"}`;
-    
-    // Navigate directly to WhatsApp with pre-filled message
-    window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
+    if (sending) return;
+    setSending(true);
+
+    try {
+      // Save submission to GitHub via API
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formName,
+          email: formEmail,
+          phone: formPhone,
+          service: formService,
+          message: formMessage,
+        }),
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setFormName("");
+          setFormEmail("");
+          setFormPhone("");
+          setFormService("");
+          setFormMessage("");
+        }, 5000);
+        
+        // Also try WhatsApp (silently, if it works great, if not the form was already saved)
+        const rawMessage = `Hi AccTax Solutions,\n\n` +
+          `*Name:* ${formName}\n` +
+          `*Email:* ${formEmail}\n` +
+          `*Phone:* ${formPhone}\n` +
+          `*Service:* ${formService || "Not specified"}\n` +
+          `*Message:* ${formMessage || "-"}`;
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`, "_blank");
+      } else {
+        alert("Failed to send your query. Please try again or call us directly.");
+      }
+    } catch {
+      alert("Network error. Please try again or call us directly.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -128,7 +163,7 @@ export default function ContactSection() {
                       placeholder="Tell us about your requirements..."
                     />
                   </div>
-                  <Button type="submit" variant="rainbow" className="w-full">
+                  <Button type="submit" variant="rainbow" className="w-full" disabled={sending}>
                     <Send className="w-4 h-4" />
                     {t.contact.form.sendMessage}
                   </Button>
