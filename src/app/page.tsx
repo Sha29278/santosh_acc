@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import HeroSection from "@/components/sections/hero";
 import ServicesSection from "@/components/sections/services-section";
 import PricingSection from "@/components/sections/pricing-section";
@@ -6,6 +7,16 @@ import FAQSection from "@/components/sections/faq-section";
 import ContactSection from "@/components/sections/contact-section";
 import ComplianceCalendar from "@/components/sections/compliance-calendar";
 import SectionDivider from "@/components/ui/section-divider";
+
+export const metadata: Metadata = {
+  title: "AccTax Solutions — GST Filing, Income Tax & Compliance Services",
+  description: "India's trusted GST filing and income tax return service. 13+ years expertise, 100+ clients. GST registration, TDS filing, business compliance. Free consultation. Call +91 9613461462.",
+  keywords: ["GST filing", "income tax filing", "GST registration", "tax consultant India", "best tax services", "tax filing online", "GST return"],
+  openGraph: {
+    title: "AccTax Solutions — GST Filing, Income Tax & Compliance Services | Jorhat, Assam",
+    description: "Professional tax filing and compliance services. 13+ years of expertise. Trusted by 100+ businesses across India.",
+  },
+};
 
 export default function Home() {
   return (
