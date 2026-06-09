@@ -11,6 +11,7 @@ import {
   ChevronUp,
   Search,
   RefreshCw,
+  Trash2,
 } from "lucide-react";
 
 interface Submission {
@@ -29,6 +30,7 @@ export default function SubmissionsPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState("");
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const fetchSubmissions = () => {
     setLoading(true);
@@ -237,6 +239,33 @@ export default function SubmissionsPage() {
                         <Mail className="w-3.5 h-3.5" />
                         Send Email
                       </a>
+                      <button
+                        onClick={async () => {
+                          if (!confirm(`Delete submission from ${sub.name}?`)) return;
+                          setDeleting(sub.id);
+                          try {
+                            const res = await fetch("/api/contact-submissions", {
+                              method: "DELETE",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ id: sub.id }),
+                            });
+                            if (res.ok) {
+                              setSubmissions((prev) => prev.filter((s) => s.id !== sub.id));
+                            } else {
+                              alert("Failed to delete. Try again.");
+                            }
+                          } catch {
+                            alert("Network error. Try again.");
+                          } finally {
+                            setDeleting(null);
+                          }
+                        }}
+                        disabled={deleting === sub.id}
+                        className="ml-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-red-50 text-red-600 text-xs font-medium hover:bg-red-100 transition-all disabled:opacity-50"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        {deleting === sub.id ? "Deleting..." : "Delete"}
+                      </button>
                     </div>
                   </div>
                 )}
