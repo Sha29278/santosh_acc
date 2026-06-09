@@ -117,6 +117,7 @@ const DEFAULT_CONTENT: Record<string, Record<string, unknown>> = {
     monthly: "Monthly", yearly: "Yearly",
     yourIncome: "Your Monthly Turnover", enterIncome: "Enter your monthly turnover...",
     recommended: "We recommend the", mostPopular: "🔥 Most Popular",
+    mostPopularPlan: "Professional",
     getStarted: "Get Started", incomeTag: "Turnover",
     comparePlans: "Compare Plans Side by Side",
     compareSubtitle: "See exactly what's included in each plan.",

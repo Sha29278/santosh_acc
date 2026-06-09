@@ -976,6 +976,43 @@ export default function AdminContent() {
                 </div>
               </div>
               <div className="border-t border-slate-100 pt-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-2">Most Popular Plan</h3>
+                <p className="text-xs text-slate-400 mb-3">Select which plan is highlighted as "Most Popular" with the gradient badge.</p>
+                <div className="flex flex-wrap gap-3">
+                  {["Starter", "Basic", "Professional", "Enterprise"].map((planName) => {
+                    const isSelected = (content.pricing || {}).mostPopularPlan === planName;
+                    return (
+                      <label
+                        key={planName}
+                        className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border-2 cursor-pointer transition-all ${
+                          isSelected
+                            ? "border-blue-500 bg-blue-50 shadow-sm"
+                            : "border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="mostPopularPlan"
+                          checked={isSelected}
+                          onChange={() => updateField("pricing", "mostPopularPlan", planName)}
+                          className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-slate-300"
+                        />
+                        <div>
+                          <span className="text-sm font-medium text-slate-700">{planName}</span>
+                          {isSelected && (
+                            <span className="ml-2 text-[10px] font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                              Most Popular
+                            </span>
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+                <p className="text-[10px] text-slate-400 mt-2">Changes apply after saving. The income-based recommendation still works independently.</p>
+              </div>
+
+              <div className="border-t border-slate-100 pt-4">
                 <h3 className="text-sm font-semibold text-slate-700 mb-3">Plan Features (default list)</h3>
                 {((content.pricing || {}).defaultFeatures || []).map((feature: string, i: number) => (
                   <div key={i} className="flex items-center gap-2 mb-2">

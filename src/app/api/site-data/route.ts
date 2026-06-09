@@ -14,6 +14,11 @@ interface SiteData {
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  // Read saved site-content to get the user-selected Most Popular plan
+  const savedContent = await readJSON<Record<string, Record<string, unknown>>>("site-content.json", {});
+  const pricingContent = (savedContent.pricing || {}) as Record<string, unknown>;
+  const mostPopularPlan = (pricingContent.mostPopularPlan as string) || "Professional";
+
   const siteData: SiteData = {
     services: await readJSON("services.json", []),
     testimonials: await readJSON("testimonials.json", []),
@@ -26,10 +31,34 @@ export async function GET() {
       { title: "Secure Data Protection", description: "Bank-grade encryption and data protection for all your confidential documents.", icon: "Shield", stat: "100%", suffix: "Secure" },
     ],
     pricingPlans: [
-      { name: "Starter", price: 999, period: "month", description: "Perfect for freelancers, students & businesses with turnover under ₹3 Lakh.", features: ["GST Registration Assistance", "Monthly GST Return Filing (GSTR-3B)", "Basic Tax Consultation", "Email Support", "Document Upload Portal"], recommended: false, color: "from-blue-500 to-indigo-500", incomeTag: "Turnover under ₹3 Lakh", incomeMax: 300000 },
-      { name: "Basic", price: 2499, period: "month", description: "Ideal for small businesses & professionals with turnover ₹3-10 Lakh.", features: ["Everything in Starter", "GSTR-1 & GSTR-3B Filing", "Income Tax Return Filing", "TDS Return Filing", "Accounting Support", "Priority Email & Phone Support", "Quarterly Business Review"], recommended: false, color: "from-blue-600 to-indigo-500", incomeTag: "Turnover ₹3-10 Lakh", incomeMin: 300000, incomeMax: 1000000 },
-      { name: "Professional", price: 4999, period: "month", description: "Perfect for established businesses & professionals with turnover ₹10-20 Lakh.", features: ["Everything in Basic", "Dedicated Account Manager", "ROC Compliance Management", "Payroll Processing", "GST Annual Return Filing", "24/7 Priority Support", "Monthly Performance Reports"], recommended: true, color: "from-indigo-600 to-blue-600", incomeTag: "Turnover ₹10-20 Lakh", incomeMin: 1000000, incomeMax: 1999999 },
-      { name: "Enterprise", price: 6999, period: "month", description: "Complete compliance suite for enterprises with turnover above ₹20 Lakh.", features: ["Everything in Professional", "Audit Support", "GST Annual Return Filing", "Income Tax Planning & Advisory", "Dedicated CA Support", "Custom Compliance Solutions"], recommended: false, color: "from-purple-600 to-indigo-600", incomeTag: "Turnover ₹20 Lakh+", incomeMin: 2000000 },
+      {
+        name: "Starter", price: 999, period: "month",
+        description: "Perfect for freelancers, students & businesses with turnover under ₹3 Lakh.",
+        features: ["GST Registration Assistance", "Monthly GST Return Filing (GSTR-3B)", "Basic Tax Consultation", "Email Support", "Document Upload Portal"],
+        recommended: "Starter" === mostPopularPlan,
+        color: "from-blue-500 to-indigo-500", incomeTag: "Turnover under ₹3 Lakh", incomeMax: 300000,
+      },
+      {
+        name: "Basic", price: 2499, period: "month",
+        description: "Ideal for small businesses & professionals with turnover ₹3-10 Lakh.",
+        features: ["Everything in Starter", "GSTR-1 & GSTR-3B Filing", "Income Tax Return Filing", "TDS Return Filing", "Accounting Support", "Priority Email & Phone Support", "Quarterly Business Review"],
+        recommended: "Basic" === mostPopularPlan,
+        color: "from-blue-600 to-indigo-500", incomeTag: "Turnover ₹3-10 Lakh", incomeMin: 300000, incomeMax: 1000000,
+      },
+      {
+        name: "Professional", price: 4999, period: "month",
+        description: "Perfect for established businesses & professionals with turnover ₹10-20 Lakh.",
+        features: ["Everything in Basic", "Dedicated Account Manager", "ROC Compliance Management", "Payroll Processing", "GST Annual Return Filing", "24/7 Priority Support", "Monthly Performance Reports"],
+        recommended: "Professional" === mostPopularPlan,
+        color: "from-indigo-600 to-blue-600", incomeTag: "Turnover ₹10-20 Lakh", incomeMin: 1000000, incomeMax: 1999999,
+      },
+      {
+        name: "Enterprise", price: 6999, period: "month",
+        description: "Complete compliance suite for enterprises with turnover above ₹20 Lakh.",
+        features: ["Everything in Professional", "Audit Support", "GST Annual Return Filing", "Income Tax Planning & Advisory", "Dedicated CA Support", "Custom Compliance Solutions"],
+        recommended: "Enterprise" === mostPopularPlan,
+        color: "from-purple-600 to-indigo-600", incomeTag: "Turnover ₹20 Lakh+", incomeMin: 2000000,
+      },
     ],
     processSteps: [
       { step: 1, title: "Register", description: "Sign up and share your basic business details with our team." },
