@@ -10,7 +10,7 @@
     "statYearsLabel": "Years Experience",
     "statClients": "100+",
     "statClientsLabel": "Trusted Customers",
-    "statAccuracy": "99.9%",
+    "statAccuracy": "99%",
     "statAccuracyLabel": "Filing Accuracy",
     "description": "Expert guidance on GST registration, filing, and compliance.",
     "cta": "Get Free Consultation"
@@ -99,10 +99,10 @@
         ]
       },
       {
-        "name": "Electrokings Projects Private Limited",
+        "name": "Electrokings India",
         "role": "Cost Accountant (Manufacturing)",
         "description": "Handled manufacturing cost accounting, inventory valuation, and tax compliance.",
-        "photoUrl": "https://gst-taxation-platform.vercel.app/api/uploads/1781008675412-EPPL.webp"
+        "photoUrl": ""
       },
       {
         "name": "S.K Kalani and Company",
@@ -125,7 +125,7 @@
           "label": "Trusted Customers"
         },
         {
-          "number": "B. Com",
+          "number": "B.Com",
           "label": "Accounting & Finance"
         },
         {
@@ -204,6 +204,7 @@
     "enterIncome": "Enter your monthly turnover...",
     "recommended": "We recommend the",
     "mostPopular": "🔥 Most Popular",
+    "mostPopularPlan": "Basic",
     "getStarted": "Get Started",
     "incomeTag": "Turnover",
     "comparePlans": "Compare Plans Side by Side",
