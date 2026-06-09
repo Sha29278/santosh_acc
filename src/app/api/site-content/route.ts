@@ -14,7 +14,7 @@ const DEFAULT_CONTENT: Record<string, Record<string, unknown>> = {
     title: "Your Trusted",
     titleHighlight: "Tax & GST",
     subtitle: "From GST registration to income tax filing, we handle all your compliance needs with expertise, accuracy, and care.",
-    ctaPrimary: "File Now",
+    ctaPrimary: "Our Services",
     ctaSecondary: "Book Free Consultation",
     statYears: "13+", statYearsLabel: "Years Experience",
     statClients: "100+", statClientsLabel: "Trusted Customers",
