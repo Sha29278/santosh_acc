@@ -61,7 +61,7 @@ export default function ContactSection() {
                         type="text"
                         required
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-                        placeholder="John Doe"
+                        placeholder="Put your name"
                       />
                     </div>
                     <div>
@@ -70,7 +70,7 @@ export default function ContactSection() {
                         type="email"
                         required
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-                        placeholder="john@example.com"
+                        placeholder="Your email"
                       />
                     </div>
                   </div>
@@ -80,7 +80,7 @@ export default function ContactSection() {
                       type="tel"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all"
-                      placeholder={phone}
+                      placeholder="Your phone no"
                     />
                   </div>
                   <div>
