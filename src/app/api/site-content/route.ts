@@ -125,6 +125,12 @@ const DEFAULT_CONTENT: Record<string, Record<string, unknown>> = {
     customPlan: "Need a Custom Plan?",
     customSubtitle: "We offer tailored solutions for large enterprises with specific requirements.",
     contactTeam: "Contact Our Team",
+    plansData: [
+      { name: "Starter", price: 999 },
+      { name: "Basic", price: 2499 },
+      { name: "Professional", price: 4999 },
+      { name: "Enterprise", price: 6999 },
+    ],
     defaultFeatures: [
       "GST Registration Assistance",
       "Monthly GST Return Filing (GSTR-3B)",

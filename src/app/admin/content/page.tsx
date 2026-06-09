@@ -965,6 +965,44 @@ export default function AdminContent() {
                     onChange={(v) => updateField("pricing", key, v)} multiline={["subtitle", "yourIncome"].includes(key)} />
                 ))}
               </div>
+              <div className="border-t border-slate-100 pt-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">Plan Pricing (₹ per month)</h3>
+                <p className="text-xs text-slate-400 mb-3">Edit the monthly price for each plan. Changes apply after saving.</p>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {["Starter", "Basic", "Professional", "Enterprise"].map((planName) => {
+                    const plansData = (content.pricing || {}).plansData || [];
+                    const plan = Array.isArray(plansData) ? plansData.find((p: any) => p.name === planName) : null;
+                    const priceVal = plan?.price !== undefined ? String(plan.price) : "";
+                    return (
+                      <div key={planName} className="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                        <label className="block text-xs font-medium text-slate-500 mb-1.5">{planName}</label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">₹</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={priceVal}
+                            onChange={(e) => {
+                              const existing = Array.isArray(plansData) ? [...plansData] : [];
+                              const idx = existing.findIndex((p: any) => p.name === planName);
+                              const numVal = parseInt(e.target.value) || 0;
+                              if (idx >= 0) {
+                                existing[idx] = { ...existing[idx], price: numVal };
+                              } else {
+                                existing.push({ name: planName, price: numVal });
+                              }
+                              updateField("pricing", "plansData", existing);
+                            }}
+                            className="w-full pl-7 pr-3 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="border-t border-slate-100 pt-4 space-y-3">
                 <h3 className="text-sm font-semibold text-slate-700">Compare Plans Section</h3>
                 <div className="grid sm:grid-cols-2 gap-4">
